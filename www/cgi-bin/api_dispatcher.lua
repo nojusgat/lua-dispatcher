@@ -13,8 +13,7 @@ end
 
 -- Main body required by uhhtpd-lua plugin
 function handle_request(env)
-
-	-- Injected uhttpd method
+    -- Injected uhttpd method
     local endpoint = require("endpoint")
 
     endpoint.send = send_response

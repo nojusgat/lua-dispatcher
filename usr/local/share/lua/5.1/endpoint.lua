@@ -26,14 +26,14 @@ end
 function endpoint:parse_query_string()
     local values = {}
     for key, val in string.gmatch(self.env.QUERY_STRING, "([^&=]+)(=*[^&=]*)") do
-		local d_key = self.decode(key)
+        local d_key = self.decode(key)
         local d_val = self.decode(val)
-		d_key = d_key:gsub('=+.*$', "")
-		d_key = d_key:gsub('%s', "_")
-		d_val = d_val:gsub('^=+', "")
+        d_key = d_key:gsub('=+.*$', "")
+        d_key = d_key:gsub('%s', "_")
+        d_val = d_val:gsub('^=+', "")
 
         values[d_key] = d_val
-	end
+    end
     return values
 end
 
