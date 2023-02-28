@@ -83,6 +83,16 @@ local function send_response(response, status)
     uhttpd.send(response)
 end
 
+local function add_string(stack, s)
+    table.insert(stack, s) -- push 's' into the the stack
+    for i = #stack - 1, 1, -1 do
+        if string.len(stack[i]) > string.len(stack[i + 1]) then
+            break
+        end
+        stack[i] = stack[i] .. table.remove(stack)
+    end
+end
+
 -- JWT secret key
 local JWT_SECRET_KEY = "random_key"
 -- Maximum allowed content length
@@ -109,12 +119,13 @@ function handle_request(env)
             return send_response({ error = "Content too large" }, "413 Content Too Large")
         end
 
-        local buf = ""
+        local buf = { "" }
         while recv_len > 0 do
             local rlen, rbuf = uhttpd.recv(4096)
             recv_len = recv_len - rlen
-            buf = buf .. rbuf
+            add_string(buf, rbuf)
         end
+        buf = table.concat(buf)
 
         if string.len(buf) > 0 then
             return parse_incoming_data(env.headers, buf)
