@@ -3,11 +3,14 @@ local jwt = require "luajwt"
 local Endpoint = {}
 Endpoint.__index = Endpoint
 
-function Endpoint:new(send, env, jwt_secret_key)
+function Endpoint:new(recv, send, env, jwt_secret_key)
     local instance = {}
     self.enabled_authorization = {}
+
+    self.body = recv
     self.send = send
     self.env = env
+
     self.jwt_secret_key = jwt_secret_key
     setmetatable(instance, self)
     return instance

@@ -57,6 +57,14 @@ local function parse_authorization_header(headers)
     return auth
 end
 
+local function parse_incoming_data(headers, buffer)
+    if headers["content-type"] == 'application/json' then
+        return cjson.decode(buffer)
+    end
+
+    return buffer
+end
+
 local function send_response(response, status)
     local content_type = "text/html"
     if type(response) == "table" then
@@ -73,6 +81,8 @@ end
 
 -- JWT secret key
 local JWT_SECRET_KEY = "random_key"
+-- Maximum allowed content length
+local LARGEST_CONTENT_LENGTH = 1048576
 
 -- Main body required by uhhtpd-lua plugin
 function handle_request(env)
@@ -86,12 +96,29 @@ function handle_request(env)
         return send_response({ error = "Not Found" }, "404 Not Found")
     end
 
-    local query = parse_query_string(env.QUERY_STRING)
-    local authorization = parse_authorization_header(env.headers)
+    env.query = parse_query_string(env.QUERY_STRING)
+    env.auth_headers = parse_authorization_header(env.headers)
 
-    env.query = query
-    env.auth_headers = authorization
+    local recv_len = tonumber(env.CONTENT_LENGTH) or 0
+    local function recv()
+        if recv_len > LARGEST_CONTENT_LENGTH then
+            return send_response({ error = "Content too large" }, "413 Content Too Large")
+        end
 
-    endpoint:new(send_response, env, JWT_SECRET_KEY)
+        local buf = ""
+        while recv_len > 0 do
+            local rlen, rbuf = uhttpd.recv(4096)
+            recv_len = recv_len - rlen
+            buf = buf .. rbuf
+        end
+
+        if string.len(buf) > 0 then
+            return parse_incoming_data(env.headers, buf)
+        end
+
+        return nil
+    end
+
+    endpoint:new(recv, send_response, env, JWT_SECRET_KEY)
     endpoint:handle_request()
 end
