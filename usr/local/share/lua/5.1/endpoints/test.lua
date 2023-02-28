@@ -1,9 +1,14 @@
-local M = {}
+local Endpoint = require("endpoint")
 
-M.path = "test/123"
+local TestEndpoint = setmetatable({}, Endpoint)
+TestEndpoint.__index = TestEndpoint
 
-function M.handle(send, query)
-    send("test", 200)
+function TestEndpoint:new(...)
+    return setmetatable(Endpoint:new(...), TestEndpoint)
 end
 
-return M
+function TestEndpoint:get()
+    self.send({ text = "Test endpoint" })
+end
+
+return TestEndpoint

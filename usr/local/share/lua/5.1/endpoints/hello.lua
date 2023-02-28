@@ -1,12 +1,16 @@
-local M = {}
+local Endpoint = require("endpoint")
 
-M.path = "hello"
+local HelloEndpoint = setmetatable({}, Endpoint)
+HelloEndpoint.__index = HelloEndpoint
 
-function M.handle(send, query)
-    send({
-        text = "Hello World",
-        query = query
-    }, 200)
+function HelloEndpoint:new(...)
+    return setmetatable(Endpoint:new(...), HelloEndpoint)
 end
 
-return M
+HelloEndpoint:authorize_get()
+
+function HelloEndpoint:get()
+    self.send({ text = "Hello World", query = self.env.query })
+end
+
+return HelloEndpoint
