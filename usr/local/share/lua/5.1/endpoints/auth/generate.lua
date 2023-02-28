@@ -1,12 +1,10 @@
 local jwt = require "luajwt"
 local Endpoint = require "endpoint"
 
-local GenerateEndpoint = setmetatable({}, Endpoint)
+local GenerateEndpoint = {}
 GenerateEndpoint.__index = GenerateEndpoint
 
-function GenerateEndpoint:new(...)
-    return setmetatable(Endpoint:new(...), GenerateEndpoint)
-end
+setmetatable(GenerateEndpoint, {__index = Endpoint})
 
 function GenerateEndpoint:get()
     local payload = {

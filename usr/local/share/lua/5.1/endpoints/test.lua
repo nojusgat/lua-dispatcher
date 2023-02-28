@@ -1,11 +1,9 @@
 local Endpoint = require "endpoint"
 
-local TestEndpoint = setmetatable({}, Endpoint)
+local TestEndpoint = {}
 TestEndpoint.__index = TestEndpoint
 
-function TestEndpoint:new(...)
-    return setmetatable(Endpoint:new(...), TestEndpoint)
-end
+setmetatable(TestEndpoint, {__index = Endpoint})
 
 function TestEndpoint:get()
     self.send({ text = "Test endpoint" })

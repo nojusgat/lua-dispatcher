@@ -58,8 +58,12 @@ local function parse_authorization_header(headers)
 end
 
 local function parse_incoming_data(headers, buffer)
-    if headers["content-type"] == 'application/json' then
+    if headers["content-type"] == "application/json" then
         return cjson.decode(buffer)
+    end
+
+    if headers["content-type"] == "application/x-www-form-urlencoded" then
+        return parse_query_string(buffer)
     end
 
     return buffer
@@ -120,5 +124,8 @@ function handle_request(env)
     end
 
     endpoint:new(recv, send_response, env, JWT_SECRET_KEY)
+    if endpoint.init then
+        endpoint:init()
+    end
     endpoint:handle_request()
 end

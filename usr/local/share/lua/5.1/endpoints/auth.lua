@@ -1,13 +1,13 @@
 local Endpoint = require "endpoint"
 
-local ProtectedEndpoint = setmetatable({}, Endpoint)
+local ProtectedEndpoint = {}
 ProtectedEndpoint.__index = ProtectedEndpoint
 
-function ProtectedEndpoint:new(...)
-    return setmetatable(Endpoint:new(...), ProtectedEndpoint)
-end
+setmetatable(ProtectedEndpoint, { __index = Endpoint })
 
-ProtectedEndpoint:enable_auth()
+function ProtectedEndpoint:init()
+    self:enable_auth()
+end
 
 function ProtectedEndpoint:get()
     self.send({ data = self.auth_data })
