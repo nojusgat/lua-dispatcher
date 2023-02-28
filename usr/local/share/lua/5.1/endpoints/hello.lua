@@ -7,7 +7,7 @@ function HelloEndpoint:new(...)
     return setmetatable(Endpoint:new(...), HelloEndpoint)
 end
 
-HelloEndpoint:authorize_get()
+HelloEndpoint:enable_auth("get")
 
 function HelloEndpoint:get()
     self.send({ text = "Hello World", query = self.env.query })

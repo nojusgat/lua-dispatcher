@@ -73,7 +73,6 @@ end
 
 -- Main body required by uhhtpd-lua plugin
 function handle_request(env)
-    -- Injected uhttpd method
     local path = parse_request_uri(env.REQUEST_URI)
     if path == "" then
         return send_response({ error = "Not Found" }, "404 Not Found")
@@ -81,7 +80,7 @@ function handle_request(env)
 
     local endpoint = prequire("endpoints." .. path)
     if not endpoint then
-        return send_response({ error = "Not Found", path = path }, "404 Not Found")
+        return send_response({ error = "Not Found" }, "404 Not Found")
     end
 
     local query = parse_query_string(env.QUERY_STRING)

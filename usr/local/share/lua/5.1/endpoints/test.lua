@@ -8,7 +8,7 @@ function TestEndpoint:new(...)
 end
 
 function TestEndpoint:get()
-    self.send({ text = "Test endpoint" })
+    self.send({ text = "Test endpoint", query = self.env.query })
 end
 
 return TestEndpoint

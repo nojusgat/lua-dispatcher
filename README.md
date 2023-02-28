@@ -5,10 +5,9 @@
 4. Pridėti bendrą užklausų validavimą
 5. Pridėti skirtingų `Content-Type` palaikymą. Pvz.: jei tekstas grįžta `test/html`, jei json'as tada `application/json` ir t.t.
 6. Pridėti HTTP kodų palaikymą ir nustatymą -> 404, 201, 200 ...
-
-Pridėti CRUD palaikymą su POST, PUT, GET, DELETE metodais
-Pridėti endpointų hierarchijos logiką - > `192.168.1.1/api/tėvas/vaikas`
-Padaryti klasę kurią paveldėtų visi endpointai ir joje būtų bendra logika
-Pridėti UCI palaikymą
-Naujoje klasęje apsirašyti paprastą "ORM" modelį kurio pagalba enpointuose būtų galima apsirašyti vertes, kurios iškart tiesiogiai rištųsi prie uci verčių ir galiotų default getteriai, setteriai. Šitas toks didenis uždavinys, tai gal jau nebe scope'e akademijoje.
-Papildomas validacijos sluoksnis. Pvz. dispatcheris patikrina ar atėjo JSON, o pats endpointas tikrina ar yra reikalingi raktai ir panašiai
+7. Pridėti CRUD palaikymą su POST, PUT, GET, DELETE metodais
+8. Pridėti endpointų hierarchijos logiką - > `192.168.1.1/api/tėvas/vaikas`
+9. Padaryti klasę kurią paveldėtų visi endpointai ir joje būtų bendra logika
+10. Pridėti UCI palaikymą
+11. Naujoje klasęje apsirašyti paprastą "ORM" modelį kurio pagalba enpointuose būtų galima apsirašyti vertes, kurios iškart tiesiogiai rištųsi prie uci verčių ir galiotų default getteriai, setteriai. Šitas toks didenis uždavinys, tai gal jau nebe scope'e akademijoje.
+12. Papildomas validacijos sluoksnis. Pvz. dispatcheris patikrina ar atėjo JSON, o pats endpointas tikrina ar yra reikalingi raktai ir panašiai

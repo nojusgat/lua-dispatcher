@@ -35,39 +35,17 @@ function Endpoint:authorized(method)
     return true
 end
 
-function Endpoint:authorize_all()
-    self.enabled_authorization = { post = true, put = true, get = true, delete = true }
-end
-
-function Endpoint:authorize_post()
-    if self.enabled_authorization == nil then
-        self.enabled_authorization = { post = true }
-    else
-        self.enabled_authorization.post = true
+function Endpoint:enable_auth(method)
+    if not method then
+        self.enabled_authorization = { post = true, put = true, get = true, delete = true }
+        return
     end
-end
 
-function Endpoint:authorize_put()
+    method = string.lower(method)
     if self.enabled_authorization == nil then
-        self.enabled_authorization = { put = true }
+        self.enabled_authorization = { [method] = true }
     else
-        self.enabled_authorization.put = true
-    end
-end
-
-function Endpoint:authorize_get()
-    if self.enabled_authorization == nil then
-        self.enabled_authorization = { get = true }
-    else
-        self.enabled_authorization.get = true
-    end
-end
-
-function Endpoint:authorize_delete()
-    if self.enabled_authorization == nil then
-        self.enabled_authorization = { delete = true }
-    else
-        self.enabled_authorization.delete = true
+        self.enabled_authorization[method] = true
     end
 end
 
