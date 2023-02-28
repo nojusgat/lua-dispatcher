@@ -1,5 +1,15 @@
 local cjson = require "cjson"
 
+local function add_string(stack, s)
+    table.insert(stack, s) -- push 's' into the the stack
+    for i = #stack - 1, 1, -1 do
+        if string.len(stack[i]) > string.len(stack[i + 1]) then
+            break
+        end
+        stack[i] = stack[i] .. table.remove(stack)
+    end
+end
+
 local function prequire(...)
     local status, lib = pcall(require, ...)
     if status then
@@ -57,18 +67,6 @@ local function parse_authorization_header(headers)
     return auth
 end
 
-local function parse_incoming_data(headers, buffer)
-    if headers["content-type"] == "application/json" then
-        return cjson.decode(buffer)
-    end
-
-    if headers["content-type"] == "application/x-www-form-urlencoded" then
-        return parse_query_string(buffer)
-    end
-
-    return buffer
-end
-
 local function send_response(response, status)
     local content_type = "text/html"
     if type(response) == "table" then
@@ -83,14 +81,28 @@ local function send_response(response, status)
     uhttpd.send(response)
 end
 
-local function add_string(stack, s)
-    table.insert(stack, s) -- push 's' into the the stack
-    for i = #stack - 1, 1, -1 do
-        if string.len(stack[i]) > string.len(stack[i + 1]) then
-            break
+local function parse_incoming_data(headers, buffer)
+    if headers["content-type"] == "application/json" then
+        local status, data = pcall(cjson.decode, buffer)
+        if not status then
+            send_response({ error = "Invalid json" }, "400 Bad Request")
+            os.exit()
+        else
+            return data
         end
-        stack[i] = stack[i] .. table.remove(stack)
     end
+
+    if headers["content-type"] == "application/x-www-form-urlencoded" then
+        local status, data = pcall(parse_query_string, buffer)
+        if not status then
+            send_response({ error = "Invalid form data" }, "400 Bad Request")
+            os.exit()
+        else
+            return data
+        end
+    end
+
+    return buffer
 end
 
 -- JWT secret key
