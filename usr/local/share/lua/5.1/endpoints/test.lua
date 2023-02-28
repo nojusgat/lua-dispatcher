@@ -1,4 +1,4 @@
-local Endpoint = require("endpoint")
+local Endpoint = require "endpoint"
 
 local TestEndpoint = setmetatable({}, Endpoint)
 TestEndpoint.__index = TestEndpoint
@@ -8,7 +8,7 @@ function TestEndpoint:new(...)
 end
 
 function TestEndpoint:get()
-    self.send({ text = "Test endpoint", query = self.env.query })
+    self.send({ text = "Test endpoint" })
 end
 
 return TestEndpoint

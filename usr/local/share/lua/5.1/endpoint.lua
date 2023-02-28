@@ -1,12 +1,15 @@
+local jwt = require "luajwt"
+
 local Endpoint = {}
 Endpoint.__index = Endpoint
 
-function Endpoint:new(send, env)
+function Endpoint:new(send, env, jwt_secret_key)
     local instance = {}
-    setmetatable(instance, self)
     self.enabled_authorization = {}
     self.send = send
     self.env = env
+    self.jwt_secret_key = jwt_secret_key
+    setmetatable(instance, self)
     return instance
 end
 
@@ -32,6 +35,12 @@ function Endpoint:authorized(method)
         return false
     end
 
+    local decoded = jwt.decode(self.env.auth_headers.token, self.jwt_secret_key, true)
+    if not decoded then
+        return false
+    end
+
+    self.auth_data = decoded
     return true
 end
 

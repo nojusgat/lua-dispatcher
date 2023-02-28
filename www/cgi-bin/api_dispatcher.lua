@@ -71,6 +71,9 @@ local function send_response(response, status)
     uhttpd.send(response)
 end
 
+-- JWT secret key
+local JWT_SECRET_KEY = "random_key"
+
 -- Main body required by uhhtpd-lua plugin
 function handle_request(env)
     local path = parse_request_uri(env.REQUEST_URI)
@@ -89,6 +92,6 @@ function handle_request(env)
     env.query = query
     env.auth_headers = authorization
 
-    endpoint:new(send_response, env)
+    endpoint:new(send_response, env, JWT_SECRET_KEY)
     endpoint:handle_request()
 end
