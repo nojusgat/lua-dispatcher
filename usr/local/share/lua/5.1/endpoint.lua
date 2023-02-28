@@ -6,11 +6,9 @@ Endpoint.__index = Endpoint
 function Endpoint:new(recv, send, env, jwt_secret_key)
     local instance = {}
     self.enabled_authorization = {}
-
     self.body = recv
     self.send = send
     self.env = env
-
     self.jwt_secret_key = jwt_secret_key
     setmetatable(instance, self)
     return instance
@@ -22,12 +20,7 @@ function Endpoint:enable_auth(method)
         return
     end
 
-    method = string.lower(method)
-    if self.enabled_authorization == nil then
-        self.enabled_authorization = { [method] = true }
-    else
-        self.enabled_authorization[method] = true
-    end
+    self.enabled_authorization[method:lower()] = true
 end
 
 function Endpoint:authorized(method)
