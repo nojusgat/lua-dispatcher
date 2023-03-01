@@ -284,13 +284,12 @@ function handle_request(env)
         end
 
         local buf = { "" }
+        local receive_bytes = 4096
         while len > 0 do
-            local rlen, rbuf = uhttpd.recv(4096)
-            if rlen == 0 then
-                break
-            end
+            local rlen, rbuf = uhttpd.recv(receive_bytes)
             len = len - rlen
             add_string(buf, rbuf)
+            if rlen < receive_bytes or rlen <= 0 then break end
         end
         buf = table.concat(buf)
 
