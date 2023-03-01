@@ -177,7 +177,7 @@ local function parse_form_data(body, boundry)
             --Yes, add it like so
             t[ct.name] = {
                 data = body:sub(cont_end + 1, ss - 3),
-                headers = ct,
+                filename = ct.filename,
                 mime = cont_type
             }
         else
