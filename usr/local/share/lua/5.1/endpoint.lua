@@ -44,14 +44,14 @@ end
 function Endpoint:handle_request()
     local method = string.lower(self.env.REQUEST_METHOD)
     if not self[method] then
-        return self.send({ error = "Method Not Allowed" }, "405 Method Not Allowed")
+        return self.send({ error = "Method Not Allowed" }, 405)
     end
 
     if self:authorized(method) then
         return self[method](self)
     end
 
-    self.send({ error = "Unauthorized" }, "401 Unauthorized")
+    self.send({ error = "Unauthorized" }, 401)
 end
 
 return Endpoint

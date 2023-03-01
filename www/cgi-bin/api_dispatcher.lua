@@ -2,6 +2,67 @@ cjson = require "cjson"
 Endpoint = require "endpoint"
 UCIOrm = require "uciorm"
 
+local STATUS_MESSAGES = {
+    [100] = "Continue",
+    [101] = "Switching Protocols",
+    [200] = "OK",
+    [201] = "Created",
+    [202] = "Accepted",
+    [203] = "Non-Authoritative Information",
+    [204] = "No Content",
+    [205] = "Reset Content",
+    [206] = "Partial Content",
+    [207] = "Multi-Status",
+    [208] = "Already Reported",
+    [226] = "IM Used",
+    [300] = "Multiple Choices",
+    [301] = "Moved Permanently",
+    [302] = "Found",
+    [303] = "See Other",
+    [304] = "Not Modified",
+    [307] = "Temporary Redirect",
+    [308] = "Permanent Redirect",
+    [400] = "Bad Request",
+    [401] = "Unauthorized",
+    [402] = "Payment Required",
+    [403] = "Forbidden",
+    [404] = "Not Found",
+    [405] = "Method Not Allowed",
+    [406] = "Not Acceptable",
+    [407] = "Proxy Authentication Required",
+    [408] = "Request Timeout",
+    [409] = "Conflict",
+    [410] = "Gone",
+    [411] = "Length Required",
+    [412] = "Precondition Failed",
+    [413] = "Content Too Large",
+    [414] = "URI Too Long",
+    [415] = "Unsupported Media Type",
+    [416] = "Range Not Satisfiable",
+    [417] = "Expectation Failed",
+    [421] = "Misdirected Request",
+    [422] = "Unprocessable Content",
+    [423] = "Locked",
+    [424] = "Failed Dependency",
+    [425] = "Too Early",
+    [426] = "Upgrade Required",
+    [428] = "Precondition Required",
+    [429] = "Too Many Requests",
+    [431] = "Request Header Fields Too Large",
+    [451] = "Unavailable For Legal Reasons",
+    [500] = "Internal Server Error",
+    [501] = "Not Implemented",
+    [502] = "Bad Gateway",
+    [503] = "Service Unavailable",
+    [504] = "Gateway Timeout",
+    [505] = "HTTP Version Not Supported",
+    [506] = "Variant Also Negotiates",
+    [507] = "Insufficient Storage",
+    [508] = "Loop Detected",
+    [510] = "Not Extended",
+    [511] = "Network Authentication Required",
+}
+
 local function add_string(stack, s)
     table.insert(stack, s) -- push 's' into the the stack
     for i = #stack - 1, 1, -1 do
@@ -77,6 +138,9 @@ local function send_response(response, status)
     end
     if status == nil then
         status = "200 OK"
+    else
+        assert(STATUS_MESSAGES[status], "HTTP response status code not defined")
+        status = status .." " .. STATUS_MESSAGES[status]
     end
     uhttpd.send("Status: " .. status .. "\r\n")
     uhttpd.send("Content-Type: " .. content_type .. "\r\n\r\n")
@@ -87,7 +151,7 @@ local function parse_incoming_data(headers, buffer)
     if headers["content-type"] == "application/json" then
         local status, data = pcall(cjson.decode, buffer)
         if not status then
-            send_response({ error = "Invalid json" }, "400 Bad Request")
+            send_response({ error = "Invalid json" }, 400)
             os.exit()
         else
             return data
@@ -97,7 +161,7 @@ local function parse_incoming_data(headers, buffer)
     if headers["content-type"] == "application/x-www-form-urlencoded" then
         local status, data = pcall(parse_query_string, buffer)
         if not status then
-            send_response({ error = "Invalid form data" }, "400 Bad Request")
+            send_response({ error = "Invalid form data" }, 400)
             os.exit()
         else
             return data
@@ -116,12 +180,12 @@ local LARGEST_CONTENT_LENGTH = 1048576
 function handle_request(env)
     local path = parse_request_uri(env.REQUEST_URI)
     if path == "" then
-        return send_response({ error = "Not Found" }, "404 Not Found")
+        return send_response({ error = "Not Found" }, 404)
     end
 
     local endpoint = prequire("endpoints." .. path)
     if not endpoint then
-        return send_response({ error = "Not Found" }, "404 Not Found")
+        return send_response({ error = "Not Found" }, 404)
     end
 
     env.query = parse_query_string(env.QUERY_STRING)
@@ -130,7 +194,7 @@ function handle_request(env)
     local recv_len = tonumber(env.CONTENT_LENGTH) or 0
     local function recv()
         if recv_len > LARGEST_CONTENT_LENGTH then
-            return send_response({ error = "Content too large" }, "413 Content Too Large")
+            return send_response({ error = "Content too large" }, 413)
         end
 
         local buf = { "" }
