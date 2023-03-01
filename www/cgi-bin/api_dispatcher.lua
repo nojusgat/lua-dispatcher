@@ -130,6 +130,65 @@ local function parse_authorization_header(headers)
     return auth
 end
 
+-- From: https://gist.github.com/lunaboards-dev/deea68b29da7b98e0c9222850486ce1e
+local function parse_form_data(body, boundry)
+    local s, e = body:find(boundry .. "\r\n")
+    local t = {}
+    local eor_reached = false
+    while (not eor_reached and s ~= nil) do
+        local ss, se = string.find(body, boundry, e)
+        se = se + 2
+        if (body:sub(se - 1, se) == "--") then
+            eor_reached = true
+        end
+        --Search for content disposition header
+        local cont_disp = body:match("Content%-Disposition:.-\r\n", e - 1):sub(33):gsub("[\r\n]+.+", "")
+        local cont_type = body:match("Content%-Type:.-\r\n", e - 1)
+        --This tells if we have a file
+        if (cont_type ~= nil) then
+            cont_type = cont_type:sub(15, -3)
+        end
+        --Basically just find this and remove it, help the parser out.
+        local sm = cont_disp:find(";")
+        if (sm ~= nil) then
+            cont_disp = cont_disp:sub(1, sm - 1) .. cont_disp:sub(sm + 1)
+        end
+        --Find the end of Content-Disposition. Could have done this better, in case it sends headers.
+        local _, cont_end = body:find("Content%-Disposition:.-\r\n\r\n", e - 1)
+        local ct = {}
+        --Find a key/value pair
+        local cs, ce = cont_disp:find(".-=\".-\"")
+        while (cs) do
+            --Get our pair.
+            local cb = cont_disp:sub(cs, ce)
+            --Find the key
+            local cd_key = cb:match(".-=\""):sub(1, -3)
+            --Find the value
+            local cd_value = cb:match("=\".-\""):sub(3, -2)
+            --Store
+            ct[cd_key] = cd_value
+            --Find the next one
+            cs, ce = cont_disp:find(".-=\".-\"", ce)
+            --But it's not super accurate.
+            if (cs ~= nil) then cs = cs + 2 end
+        end
+        --Do we have a file?
+        if (ct.filename ~= nil) then
+            --Yes, add it like so
+            t[ct.name] = {
+                data = body:sub(cont_end + 1, ss - 3),
+                headers = ct,
+                mime = cont_type
+            }
+        else
+            --No. Just add the data.
+            t[ct.name] = body:sub(cont_end + 1, ss - 3);
+        end
+        s, e = ss, se
+    end
+    return t
+end
+
 local function send_response(response, status)
     local content_type = "text/html"
     if type(response) == "table" then
@@ -140,7 +199,7 @@ local function send_response(response, status)
         status = "200 OK"
     else
         assert(STATUS_MESSAGES[status], "HTTP response status code not defined")
-        status = status .." " .. STATUS_MESSAGES[status]
+        status = status .. " " .. STATUS_MESSAGES[status]
     end
     uhttpd.send("Status: " .. status .. "\r\n")
     uhttpd.send("Content-Type: " .. content_type .. "\r\n\r\n")
@@ -148,7 +207,12 @@ local function send_response(response, status)
 end
 
 local function parse_incoming_data(headers, buffer)
-    if headers["content-type"] == "application/json" then
+    if not headers["content-type"] then
+        send_response({ error = "Content type not provided" }, 400)
+        os.exit()
+    end
+
+    if string.match(headers["content-type"], "^application/json") then
         local status, data = pcall(cjson.decode, buffer)
         if not status then
             send_response({ error = "Invalid json" }, 400)
@@ -158,7 +222,7 @@ local function parse_incoming_data(headers, buffer)
         end
     end
 
-    if headers["content-type"] == "application/x-www-form-urlencoded" then
+    if string.match(headers["content-type"], "^application/x%-www%-form%-urlencoded") then
         local status, data = pcall(parse_query_string, buffer)
         if not status then
             send_response({ error = "Invalid form data" }, 400)
@@ -168,7 +232,28 @@ local function parse_incoming_data(headers, buffer)
         end
     end
 
-    return buffer
+    if string.match(headers["content-type"], "^multipart/form%-data") then
+        local boundary = string.match(headers["content-type"], "^multipart/form%-data; boundary=(.+)$")
+        if not boundary then
+            send_response({ error = "Boundary not found" }, 400)
+            os.exit()
+        end
+
+        local status, data = pcall(parse_form_data, buffer, boundary)
+        if not status then
+            send_response({ error = "Invalid form data" }, 400)
+            os.exit()
+        else
+            return data
+        end
+    end
+
+    if string.match(headers["content-type"], "^text/plain") then
+        return buffer
+    end
+
+    send_response({ error = "Unable to handle this content type" }, 500)
+    os.exit()
 end
 
 -- JWT secret key
@@ -191,16 +276,20 @@ function handle_request(env)
     env.query = parse_query_string(env.QUERY_STRING)
     env.auth_headers = parse_authorization_header(env.headers)
 
-    local recv_len = tonumber(env.CONTENT_LENGTH) or 0
     local function recv()
-        if recv_len > LARGEST_CONTENT_LENGTH then
-            return send_response({ error = "Content too large" }, 413)
+        local len = tonumber(env.CONTENT_LENGTH) or 0
+        if len > LARGEST_CONTENT_LENGTH then
+            send_response({ error = "Content too large" }, 413)
+            os.exit()
         end
 
         local buf = { "" }
-        while recv_len > 0 do
+        while len > 0 do
             local rlen, rbuf = uhttpd.recv(4096)
-            recv_len = recv_len - rlen
+            if rlen == 0 then
+                break
+            end
+            len = len - rlen
             add_string(buf, rbuf)
         end
         buf = table.concat(buf)
