@@ -1,5 +1,3 @@
-local Endpoint = require "endpoint"
-
 local ProtectedEndpoint = {}
 ProtectedEndpoint.__index = ProtectedEndpoint
 

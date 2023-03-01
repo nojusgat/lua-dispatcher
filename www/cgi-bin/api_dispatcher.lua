@@ -1,4 +1,6 @@
-local cjson = require "cjson"
+cjson = require "cjson"
+Endpoint = require "endpoint"
+UCIOrm = require "uciorm"
 
 local function add_string(stack, s)
     table.insert(stack, s) -- push 's' into the the stack

@@ -1,5 +1,4 @@
 local jwt = require "luajwt"
-local Endpoint = require "endpoint"
 
 local GenerateEndpoint = {}
 GenerateEndpoint.__index = GenerateEndpoint

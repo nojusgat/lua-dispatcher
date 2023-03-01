@@ -1,5 +1,3 @@
-local Endpoint = require "endpoint"
-
 local TestEndpoint = {}
 TestEndpoint.__index = TestEndpoint
 

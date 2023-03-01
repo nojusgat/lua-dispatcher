@@ -1,9 +1,7 @@
-local Endpoint = require "endpoint"
-
 local HelloEndpoint = {}
 HelloEndpoint.__index = HelloEndpoint
 
-setmetatable(HelloEndpoint, {__index = Endpoint})
+setmetatable(HelloEndpoint, { __index = Endpoint })
 
 function HelloEndpoint:get()
     self.send({ text = "Hello World", query = self.env.query })
