@@ -3,6 +3,7 @@ UploadEndpoint.__index = UploadEndpoint
 
 setmetatable(UploadEndpoint, { __index = Endpoint })
 
+-- curl -F uploadfile=@filename 'http://localhost/api/upload'
 function UploadEndpoint:post()
     local data = self.body()
     if not data then
