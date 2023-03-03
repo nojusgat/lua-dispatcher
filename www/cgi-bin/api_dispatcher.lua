@@ -169,6 +169,9 @@ end
 
 local function parse_query_string(query)
     local values = {}
+    if not query then
+        return values
+    end
     for key, val in string.gmatch(query, "([^&=]+)(=*[^&=]*)") do
         local d_key = uhttpd.urldecode(key)
         local d_val = uhttpd.urldecode(val)
@@ -183,6 +186,9 @@ end
 
 local function parse_authorization_header(headers)
     local auth = {}
+    if not headers then
+        return auth
+    end
     local header = headers["authorization"]
     if header ~= nil then
         local token_type, token = string.match(header, "(%S+) (%S+)")
@@ -197,6 +203,7 @@ end
 -- From: https://gist.github.com/lunaboards-dev/deea68b29da7b98e0c9222850486ce1e
 local function parse_form_data(body, boundry)
     local s, e = body:find(boundry .. "\r\n")
+    assert(s ~= nil, "Boundry not found")
     local t = {}
     local eor_reached = false
     while (not eor_reached and s ~= nil) do
@@ -273,7 +280,7 @@ end
 local function send_file(file_contents, file_name)
     if not file_name then file_name = "file" end
     local content_type = "application/octet-stream"
-    local ext = string:match(file_name, "[^%.]+$")
+    local ext = string.match(file_name, "[^%.]+$")
     if ext and MIME_TYPES[string.lower(ext)] then
         content_type = MIME_TYPES[string.lower(ext)]
     end
@@ -388,4 +395,21 @@ function handle_request(env)
         instance:init()
     end
     instance:handle_request()
+end
+
+if _TEST then
+    local M = {}
+
+    M.prequire = prequire
+    M.remove_last_slash = remove_last_slash
+    M.parse_request_uri = parse_request_uri
+    M.parse_query_string = parse_query_string
+    M.parse_authorization_header = parse_authorization_header
+    M.parse_form_data = parse_form_data
+    M.send_response = send_response
+    M.send_file = send_file
+    M.parse_incoming_data = parse_incoming_data
+    M.handle_request = handle_request
+
+    return M
 end
