@@ -4,6 +4,7 @@ local UCIOrm = {}
 UCIOrm.__index = UCIOrm
 
 function UCIOrm:init(config, section)
+    assert(config, "Config is not defined")
     local instance = {}
     self.uci = uci.cursor()
     self.config = config
@@ -14,8 +15,14 @@ function UCIOrm:init(config, section)
 end
 
 function UCIOrm:create(type)
+    if not type then
+        return false
+    end
     if not self.section then
         self.section = self.uci:add(self.config, type)
+        if not self.section then
+            return false
+        end
         self:update_metatable()
         return true
     end
@@ -27,44 +34,26 @@ function UCIOrm:create(type)
 end
 
 function UCIOrm:get(option)
-    if not self.config or not self.section then
-        return nil
-    end
+    assert(self.section, "Section is not defined")
     return self.uci:get(self.config, self.section, option)
 end
 
 function UCIOrm:get_all()
-    if not self.config or not self.section then
-        return nil
-    end
+    assert(self.section, "Section is not defined")
     return self.uci:get_all(self.config, self.section)
 end
 
 function UCIOrm:set(option, value)
-    if not self.config or not self.section then
-        return
-    end
+    assert(self.section, "Section is not defined")
     self.uci:set(self.config, self.section, option, value)
 end
 
-function UCIOrm:delete_section()
-    if not self.config or not self.section then
-        return
-    end
-    self.uci:delete(self.config, self.section)
-end
-
-function UCIOrm:delete_option(option)
-    if not self.config or not self.section then
-        return
-    end
+function UCIOrm:delete(option)
+    assert(self.section, "Section is not defined")
     self.uci:delete(self.config, self.section, option)
 end
 
 function UCIOrm:save()
-    if not self.config then
-        return
-    end
     self.uci:commit(self.config)
 end
 
@@ -75,7 +64,7 @@ function UCIOrm:update_metatable()
         end,
         __newindex = function(_, key, value)
             if value == nil then
-                self:delete_option(key)
+                self:delete(key)
             else
                 self:set(key, value)
             end
