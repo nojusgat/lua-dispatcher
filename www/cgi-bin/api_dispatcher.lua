@@ -137,6 +137,18 @@ local MIME_TYPES = {
     ["7z"] = "application/x-7z-compressed",
 }
 
+local HTTP_METHODS = {
+    "CONNECT",
+    "DELETE",
+    "GET",
+    "HEAD",
+    "PATCH",
+    "OPTIONS",
+    "POST",
+    "PUT",
+    "TRACE"
+}
+
 local function prequire(...)
     local status, lib = pcall(require, ...)
     if status then
@@ -260,7 +272,7 @@ local function parse_form_data(body, boundry)
     return t
 end
 
-local function send_response(response, status)
+local function parse_send_response_arguments(response, status)
     local content_type = "text/html"
     if type(response) == "table" then
         content_type = "application/json"
@@ -272,12 +284,45 @@ local function send_response(response, status)
         assert(STATUS_MESSAGES[status], "HTTP response status code not defined")
         status = status .. " " .. STATUS_MESSAGES[status]
     end
+
+    return content_type, status, response
+end
+
+local function set_cors_headers(cors)
+    if cors == nil then return end
+    assert(type(cors) == "table", "Invalid cors settings")
+    local origin = cors.origin
+    local methods = cors.methods
+    if origin ~= nil then
+        if origin ~= "" then
+            uhttpd.send("Access-Control-Allow-Origin: " .. origin .. "\r\n")
+            if methods ~= nil then
+                uhttpd.send("Access-Control-Allow-Methods: " .. methods .. "\r\n")
+            end
+        end
+        if origin ~= "*" then
+            uhttpd.send("Vary: Origin\r\n")
+        end
+    end
+end
+
+local function send_response(initial_response, initial_status)
+    local content_type, status, response = parse_send_response_arguments(initial_response, initial_status)
     uhttpd.send("Status: " .. status .. "\r\n")
     uhttpd.send("Content-Type: " .. content_type .. "\r\n\r\n")
     uhttpd.send(response)
 end
 
-local function send_file(file_contents, file_name)
+local function send_response_options(cors, allowed_methods)
+    uhttpd.send("Status: 200 OK\r\n")
+    set_cors_headers(cors)
+    if allowed_methods then
+        uhttpd.send("Allow: " .. allowed_methods .. "\r\n")
+    end
+    uhttpd.send("Content-Length: 0\r\n\r\n")
+end
+
+local function send_response_file(file_contents, file_name)
     if not file_name then file_name = "file" end
     local content_type = "application/octet-stream"
     local ext = string.match(file_name, "[^%.]+$")
@@ -288,6 +333,14 @@ local function send_file(file_contents, file_name)
     uhttpd.send("Content-Type: " .. content_type .. "\r\n")
     uhttpd.send("Content-Disposition: attachment; filename=\"" .. file_name .. "\"\r\n\r\n")
     uhttpd.send(file_contents)
+end
+
+local function send_response_cors(initial_response, initial_status, cors)
+    local content_type, status, response = parse_send_response_arguments(initial_response, initial_status)
+    uhttpd.send("Status: " .. status .. "\r\n")
+    set_cors_headers(cors)
+    uhttpd.send("Content-Type: " .. content_type .. "\r\n\r\n")
+    uhttpd.send(response)
 end
 
 local function parse_incoming_data(headers, buffer)
@@ -387,9 +440,12 @@ function handle_request(env)
     local instance = endpoint:new({
         body = recv,
         send = send_response,
-        send_file = send_file,
+        send_file = send_response_file,
+        send_cors = send_response_cors,
+        send_options = send_response_options,
         env = env,
         jwt_secret_key = JWT_SECRET_KEY,
+        http_methods = HTTP_METHODS
     })
     if instance.init then
         instance:init()
@@ -407,7 +463,7 @@ if _TEST then
     M.parse_authorization_header = parse_authorization_header
     M.parse_form_data = parse_form_data
     M.send_response = send_response
-    M.send_file = send_file
+    M.send_file = send_response_file
     M.parse_incoming_data = parse_incoming_data
     M.handle_request = handle_request
 

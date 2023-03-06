@@ -8,6 +8,12 @@ TestAuth = {}
         self.endpoint = endpoint:new({
             env = {
                 auth_headers = {}
+            },
+            http_methods = {
+                "POST",
+                "PUT",
+                "GET",
+                "DELETE"
             }
         })
     end
@@ -89,11 +95,134 @@ TestAuth = {}
     end
 -- end of table TestAuth
 
+TestCors = {}
+    function TestCors:setUp()
+        self.endpoint = endpoint:new({
+            env = {
+                headers = {}
+            },
+            http_methods = {
+                "POST",
+                "PUT",
+                "GET",
+                "DELETE"
+            }
+        })
+    end
+
+    function TestCors:test_AllMethods_CorsDisabled_ReturnsEmptyTable()
+        lu.assertItemsEquals(self.endpoint:cors_options("post"), { })
+        lu.assertItemsEquals(self.endpoint:cors_options("put"), { })
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { })
+        lu.assertItemsEquals(self.endpoint:cors_options("delete"), { })
+    end
+
+    function TestCors:test_AllMethods_CorsEnabled_CorrectOriginHeader_ReturnsTableWithOrigin()
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://localhost"
+
+        self.endpoint:enable_cors(nil, { "http://localhost" })
+
+        lu.assertItemsEquals(self.endpoint:cors_options("post"), { methods="", origin="http://localhost" })
+        lu.assertItemsEquals(self.endpoint:cors_options("put"), { methods="", origin="http://localhost" })
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="", origin="http://localhost" })
+        lu.assertItemsEquals(self.endpoint:cors_options("delete"), { methods="", origin="http://localhost" })
+    end
+
+    function TestCors:test_AllMethods_CorsEnabled_IncorrectOriginHeader_ReturnsTableWithoutOrigin()
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://google.com"
+
+        self.endpoint:enable_cors(nil, { "http://localhost" })
+
+        lu.assertItemsEquals(self.endpoint:cors_options("post"), { origin="" })
+        lu.assertItemsEquals(self.endpoint:cors_options("put"), { origin="" })
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { origin="" })
+        lu.assertItemsEquals(self.endpoint:cors_options("delete"), { origin="" })
+    end
+
+    function TestCors:test_OneMethod_CorsEnabled_ReturnsTableWithOrigin()
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://localhost"
+
+        self.endpoint:enable_cors("get", { "http://localhost" })
+
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="", origin="http://localhost" })
+        lu.assertItemsEquals(self.endpoint:cors_options("post"), { })
+        lu.assertItemsEquals(self.endpoint:cors_options("put"), { })
+        lu.assertItemsEquals(self.endpoint:cors_options("delete"), { })
+    end
+
+    function TestCors:test_OneMethod_CorsEnabled_MultipleDomains_ReturnsCorrectOrigin()
+        self.endpoint:enable_cors("get", { "http://localhost", "http://google.com" })
+
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://localhost"
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="", origin="http://localhost" })
+
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://google.com"
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="", origin="http://google.com" })
+
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://test.com"
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { origin="" })
+    end
+
+    function TestCors:test_OneMethod_CorsEnabled_AllDomains_ReturnsCorrectOrigin()
+        self.endpoint:enable_cors("get")
+
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://localhost"
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="", origin="*" })
+
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://google.com"
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="", origin="*" })
+
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://test.com"
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="", origin="*" })
+    end
+
+    function TestCors:test_AllMethods_CorsEnabled_EndpointHasMultipleMethods_ReturnsAllMethods()
+        self.endpoint:enable_cors(nil, { "http://localhost" })
+
+        self.endpoint.get = function () end
+        self.endpoint.post = function () end
+        self.endpoint.put = function () end
+        self.endpoint.delete = function () end
+
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://localhost"
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="POST, DELETE, PUT, GET", origin="http://localhost" })
+    end
+
+    function TestCors:test_OneMethod_CorsEnabled_EndpointHasMultipleMethods_ReturnsOneMethod()
+        self.endpoint:enable_cors("get", { "http://localhost" })
+
+        self.endpoint.get = function () end
+        self.endpoint.post = function () end
+        self.endpoint.put = function () end
+        self.endpoint.delete = function () end
+
+        -- Simulate request origin
+        self.endpoint.env.headers.origin = "http://localhost"
+        lu.assertItemsEquals(self.endpoint:cors_options("get"), { methods="GET", origin="http://localhost" })
+    end
+-- end of table TestCors
+
 TestHandleRequest = {}
     function TestHandleRequest:setUp()
         self.endpoint = endpoint:new({
             env = {
                 auth_headers = {}
+            },
+            http_methods = {
+                "POST",
+                "PUT",
+                "GET",
+                "DELETE"
             }
         })
     end
