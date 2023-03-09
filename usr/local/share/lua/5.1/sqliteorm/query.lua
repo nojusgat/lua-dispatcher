@@ -10,6 +10,7 @@ function Query:new(parent, args, created)
     instance.__created__ = created or false
     instance.save = Query.save
     instance.delete = Query.delete
+    instance.to_table = Query.to_table
     setmetatable(instance, { __index = Query.index, __newindex = Query.newIndex })
     return instance
 end
@@ -23,7 +24,8 @@ function Query:__insert__()
     local counter = 0
     for key, value in pairs(self.__data__) do
         local column = self.__parent__:get_column(key)
-        assert(column.type.validator(value), string.format("Insert: Column %s in table %s failed type validation", column.name, self.__parent__.name))
+        assert(column.type.validator(value),
+        string.format("Insert: Column %s in table %s failed type validation", column.name, self.__parent__.name))
 
         local colname = "`" .. column.name .. "`"
         local colvalue = column.type.to_sql(value)
@@ -55,7 +57,8 @@ function Query:__update__()
     local counter = 0
     local function generate_query(key, value)
         local column = self.__parent__:get_column(key)
-        assert(column.type.validator(value), string.format("Update: Column %s in table %s failed type validation", column.name, self.__parent__.name))
+        assert(column.type.validator(value),
+        string.format("Update: Column %s in table %s failed type validation", column.name, self.__parent__.name))
 
         local colvalue = "`" .. column.name .. "` = "
         colvalue = colvalue .. column.type.to_sql(value)
@@ -96,6 +99,23 @@ function Query:delete()
     query = query .. "'" .. tostring(self.__data__[self.__parent__.primary_column.name]) .. "'"
 
     assert(self.__parent__:execute(query))
+end
+
+function Query:to_table()
+    local function helper(data)
+        local converted = {}
+        if next(data) ~= nil then
+            for key, value in pairs(data) do
+                if type(value) == "table" then
+                    converted[key] = helper(value.__data__)
+                else
+                    converted[key] = value
+                end
+            end
+        end
+        return converted
+    end
+    return helper(self.__data__)
 end
 
 function Query:save()

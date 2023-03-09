@@ -407,7 +407,17 @@ function handle_request(env)
 
     local endpoint = prequire("endpoints." .. path)
     if not endpoint then
-        return send_response({ error = "Not Found" }, 404)
+        -- Fallback for ids in url
+        local ids = {}
+        for id in string.gmatch(path, "%.(%d+)%.?") do
+            table.insert(ids, id)
+        end
+        path = string.gsub(path, "(%.)%d+(%.?)", "%1_id_%2")
+        endpoint = prequire("endpoints." .. path)
+        if not endpoint then
+            return send_response({ error = "Not Found" }, 404)
+        end
+        env._id_ = ids
     end
 
     env.query = parse_query_string(env.QUERY_STRING)

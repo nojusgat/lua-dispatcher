@@ -24,12 +24,11 @@ function Column:new(args)
 end
 
 function Column:types()
-    local this = self
     local types = {
         ["string"] = {
             internal = "string",
             external = "TEXT",
-            validator = function (value)
+            validator = function(value)
                 if self.nullable == true and value == nil then
                     return true
                 end
@@ -39,25 +38,25 @@ function Column:types()
                 if type(value) ~= "string" then
                     return false
                 end
-                if this.length ~= nil and #value > this.length then
+                if self.length ~= nil and #value > self.length then
                     return false
                 end
                 return true
             end,
-            to_sql = function (value)
+            to_sql = function(value)
                 if value == nil then
                     return "NULL"
                 end
-                return "'" .. value .. "'"
+                return "'" .. self.table:escape(value) .. "'"
             end,
-            from_sql = function (value)
+            from_sql = function(value)
                 return tostring(value)
             end
         },
         ["number"] = {
             internal = "number",
             external = "INTEGER",
-            validator = function (value)
+            validator = function(value)
                 if self.nullable == true and value == nil then
                     return true
                 end
@@ -66,20 +65,20 @@ function Column:types()
                 end
                 return type(value) == "number"
             end,
-            to_sql = function (value)
+            to_sql = function(value)
                 if value == nil then
                     return "NULL"
                 end
                 return tostring(value)
             end,
-            from_sql = function (value)
+            from_sql = function(value)
                 return tonumber(value)
             end
         },
         ["boolean"] = {
             internal = "boolean",
             external = "INTEGER",
-            validator = function (value)
+            validator = function(value)
                 if self.nullable == true and value == nil then
                     return true
                 end
@@ -88,13 +87,13 @@ function Column:types()
                 end
                 return type(value) == "boolean"
             end,
-            to_sql = function (value)
+            to_sql = function(value)
                 if value == true then
                     return "1"
                 end
                 return "0"
             end,
-            from_sql = function (value)
+            from_sql = function(value)
                 if tonumber(value) == 1 then
                     return true
                 end
