@@ -11,3 +11,13 @@
 10. Pridėti UCI palaikymą
 11. Naujoje klasęje apsirašyti paprastą "ORM" modelį kurio pagalba enpointuose būtų galima apsirašyti vertes, kurios iškart tiesiogiai rištųsi prie uci verčių ir galiotų default getteriai, setteriai. Šitas toks didenis uždavinys, tai gal jau nebe scope'e akademijoje.
 12. Papildomas validacijos sluoksnis. Pvz. dispatcheris patikrina ar atėjo JSON, o pats endpointas tikrina ar yra reikalingi raktai ir panašiai
+
+## Modules used
+- [lua-cjson](https://github.com/openwrt/packages/tree/master/lang/lua-cjson "lua-cjson")
+- [luasql-sqlite3](https://github.com/openwrt/packages/tree/master/lang/luasql "luasql-sqlite3")
+- [luajwt](https://github.com/x25/luajwt "luajwt")
+- [luaunit](https://github.com/bluebird75/luaunit "luaunit") for unit testing
+
+
+- [uHTTPd webserver](https://openwrt.org/docs/guide-user/services/webserver/http.uhttpd "uHTTPd webserver")
+- [UCI](https://openwrt.org/docs/techref/uci "UCI")
