@@ -3,15 +3,10 @@ local DivisionsDepartments = function (sql, Divisions, Departments)
         name = "divisions_departments",
         columns = {
             {
-                name = "id",
-                type = "number",
-                primary_key = true,
-                auto_increment = true
-            },
-            {
                 name = "division_id",
                 type = "number",
                 nullable = false,
+                primary_key = true,
                 foreign_key = {
                     table = Divisions,
                     delete = "CASCADE"
@@ -21,6 +16,7 @@ local DivisionsDepartments = function (sql, Divisions, Departments)
                 name = "department_id",
                 type = "number",
                 nullable = false,
+                primary_key = true,
                 foreign_key = {
                     table = Departments,
                     delete = "CASCADE"

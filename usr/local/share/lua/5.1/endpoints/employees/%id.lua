@@ -1,14 +1,16 @@
 local BaseEndpoint = require "endpoints.BaseEndpoint"
-local EmployeesEndpoint = {}
-EmployeesEndpoint.__index = EmployeesEndpoint
+local EmployeeEndpoint = {}
+EmployeeEndpoint.__index = EmployeeEndpoint
 
-setmetatable(EmployeesEndpoint, { __index = BaseEndpoint })
+setmetatable(EmployeeEndpoint, { __index = BaseEndpoint })
 
-function EmployeesEndpoint:init()
-    self:enable_auth("post")
+function EmployeeEndpoint:init()
+    self:enable_auth("patch")
+    self:enable_auth("delete")
 end
 
-function EmployeesEndpoint:get()
+function EmployeeEndpoint:get()
+    local id = tonumber(self.env["%id"][1])
     local expand = {}
     if self.env.query.expand ~= nil then
         expand = self:query_to_string_table("expand", {
@@ -25,69 +27,49 @@ function EmployeesEndpoint:get()
         prepend_where = "employees."
     end
 
-    local where = {}
-    if self.env.query.company_id ~= nil then
-        where[prepend_where .. "company_id__in"] = self:query_to_number_table("company_id")
-    end
-    if self.env.query.office_id ~= nil then
-        where[prepend_where .. "office_id__in"] = self:query_to_number_table("office_id")
-    end
-    if self.env.query.division_id ~= nil then
-        where[prepend_where .. "division_id__in"] = self:query_to_number_table("division_id")
-    end
-    if self.env.query.department_id ~= nil then
-        where[prepend_where .. "department_id__in"] = self:query_to_number_table("department_id")
-    end
-    if self.env.query.group_id ~= nil then
-        where[prepend_where .. "group_id__in"] = self:query_to_number_table("group_id")
-    end
-
-    if self.env.query.q ~= nil then
-        local search = tostring(self.env.query.q)
-        where.__or = {}
-        where.__or[prepend_where .. "name__like"] = "%" .. search .. "%"
-        where.__or[prepend_where .. "surname__like"] = "%" .. search .. "%"
-        where.__or[prepend_where .. "position__like"] = "%" .. search .. "%"
-        where.__or[prepend_where .. "phone_number__like"] = "%" .. search .. "%"
-        where.__or[prepend_where .. "email__like"] = "%" .. search .. "%"
-    end
-
-    local pre_results = self.model["Employees"]:get():where(where)
+    local pre_employee = self.model["Employees"]
+        :get()
+        :where({ [prepend_where .. "id"] = id })
 
     if expand.company_id then
-        pre_results = pre_results:left_join(self.model["Companies"])
+        pre_employee = pre_employee:left_join(self.model["Companies"])
     end
     if expand.office_id then
-        pre_results = pre_results:left_join(self.model["Offices"])
+        pre_employee = pre_employee:left_join(self.model["Offices"])
     end
     if expand.division_id then
-        pre_results = pre_results:left_join(self.model["Divisions"])
+        pre_employee = pre_employee:left_join(self.model["Divisions"])
     end
     if expand.department_id then
-        pre_results = pre_results:left_join(self.model["Departments"])
+        pre_employee = pre_employee:left_join(self.model["Departments"])
     end
     if expand.group_id then
-        pre_results = pre_results:left_join(self.model["Groups"])
+        pre_employee = pre_employee:left_join(self.model["Groups"])
     end
 
-    local total_count = pre_results:count()
-    local limit, page, total_pages = self:pagination(total_count)
+    local employee = pre_employee:find_one()
 
-    local offset = (page - 1) * limit
-    local results = pre_results:limit(limit):offset(offset):find()
-
-    local formated_results = {}
-    for _, value in pairs(results) do
-        table.insert(formated_results, value:to_table())
+    if employee == nil then
+        return self.send({ error = "Employee not found" }, 404)
     end
 
-    self.send({ results = formated_results, page = page, total_pages = total_pages, total_results = #results })
+    self.send({ result = employee:to_table() })
 end
 
-function EmployeesEndpoint:post()
+function EmployeeEndpoint:patch()
     self:permission("edit_employees")
 
+    local id = tonumber(self.env["%id"][1])
     local data = self.body()
+
+    local employee = self.model["Employees"]
+        :get()
+        :where({ id = id })
+        :find_one()
+
+    if employee == nil then
+        return self.send({ error = "Employee not found" }, 404)
+    end
 
     if not data then
         return self.send({ error = "Data required" }, 400)
@@ -137,14 +119,21 @@ function EmployeesEndpoint:post()
         end
     end
 
+    local last_photo = nil
     if data.photo then
-        data.photo = self:upload_image(data.photo)
+        if data.photo ~= cjson.null and data.photo ~= "" then
+            data.photo = self:upload_image(data.photo)
+        end
+        last_photo = employee.photo
     end
 
     local status, results = pcall(function()
-        local employee = self.model["Employees"](data)
+        for key, value in pairs(data) do
+            if value == cjson.null then value = nil end
+            if value == "" then value = nil end
+            employee[key] = value
+        end
         employee:save()
-        return employee
     end)
 
     if status == false then
@@ -155,7 +144,40 @@ function EmployeesEndpoint:post()
         return self.send({ error = error }, 400)
     end
 
-    self.send({ result = results:to_table() }, 201)
+    if last_photo then
+        os.remove(self.image_path .. last_photo)
+    end
+
+    self.send("", 204)
 end
 
-return EmployeesEndpoint
+function EmployeeEndpoint:delete()
+    self:permission("delete_employees")
+
+    local id = tonumber(self.env["%id"][1])
+    local employee = self.model["Employees"]
+        :get()
+        :where({ id = id })
+        :find_one()
+
+    if employee == nil then
+        return self.send({ error = "Employee not found" }, 404)
+    end
+
+    if employee.photo then
+        os.remove(self.image_path .. employee.photo)
+    end
+
+    local status, results = pcall(function()
+        employee:delete()
+    end)
+
+    if status == false then
+        local error = string.match(results, ": (.+)$")
+        return self.send({ error = error }, 400)
+    end
+
+    self.send("", 204)
+end
+
+return EmployeeEndpoint

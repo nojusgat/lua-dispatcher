@@ -91,6 +91,11 @@ function Endpoint:authorized(method)
     end
 
     self.auth_data = decoded
+
+    if self.authorize ~= nil then
+        return self:authorize()
+    end
+
     return true
 end
 

@@ -11,7 +11,8 @@ local Companies = function (sql)
             {
                 name = "name",
                 type = "string",
-                nullable = false
+                nullable = false,
+                unique = true
             },
         }
     })

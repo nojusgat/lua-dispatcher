@@ -1,12 +1,16 @@
-local UserPermissions = function (sql)
+local UserPermissions = function (sql, Users)
     return sql:Table({
         name = "user_permissions",
         columns = {
             {
-                name = "id",
+                name = "user_id",
                 type = "number",
+                nullable = false,
                 primary_key = true,
-                auto_increment = true
+                foreign_key = {
+                    table = Users,
+                    delete = "CASCADE"
+                }
             },
             {
                 name = "edit_employees",
@@ -15,6 +19,16 @@ local UserPermissions = function (sql)
             },
             {
                 name = "delete_employees",
+                type = "boolean",
+                nullable = false
+            },
+            {
+                name = "edit_companies",
+                type = "boolean",
+                nullable = false
+            },
+            {
+                name = "delete_companies",
                 type = "boolean",
                 nullable = false
             },
@@ -48,22 +62,7 @@ local UserPermissions = function (sql)
                 type = "boolean",
                 nullable = false
             },
-            {
-                name = "delete_permissions",
-                type = "boolean",
-                nullable = false
-            },
-            {
-                name = "edit_companies",
-                type = "boolean",
-                nullable = false
-            },
-            {
-                name = "delete_companies",
-                type = "boolean",
-                nullable = false
-            },
-        }
+        },
     })
 end
 

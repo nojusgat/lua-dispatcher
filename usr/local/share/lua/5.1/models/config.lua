@@ -1,5 +1,7 @@
 local sqlite = require "sqliteorm.instance"
-local sql = sqlite("database.db", true)
+local sql = sqlite("database.db", {
+    foreign_keys = true
+})
 
 local UserPermissions = require "models.UserPermissions"
 local Users = require "models.Users"
@@ -15,8 +17,8 @@ local DivisionsDepartments = require "models.DivisionsDepartments"
 local OfficesDivisions = require "models.OfficesDivisions"
 
 local config = {}
-config["UserPermissions"] = UserPermissions(sql)
-config["Users"] = Users(sql, config["UserPermissions"])
+config["Users"] = Users(sql)
+config["UserPermissions"] = UserPermissions(sql, config["Users"])
 config["Companies"] = Companies(sql)
 config["Offices"] = Offices(sql)
 config["Departments"] = Departments(sql)

@@ -1,0 +1,2155 @@
+{
+	"info": {
+		"_postman_id": "28917690-2f41-4084-8d87-d462710465b5",
+		"name": "Dispatcher REST Api",
+		"description": "Lua Dispatcher REST Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26163011"
+	},
+	"item": [
+		{
+			"name": "Employees",
+			"item": [
+				{
+					"name": "List Employees",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/employees",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"employees"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "expand",
+									"value": "company_id,office_id",
+									"description": "Join related tables",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "test",
+									"description": "Search in all fields",
+									"disabled": true
+								},
+								{
+									"key": "company_id",
+									"value": "1,2",
+									"description": "Filter by company",
+									"disabled": true
+								},
+								{
+									"key": "office_id",
+									"value": "5,4",
+									"description": "Filter by office",
+									"disabled": true
+								},
+								{
+									"key": "division_id",
+									"value": "1,2",
+									"description": "Filter by division",
+									"disabled": true
+								},
+								{
+									"key": "department_id",
+									"value": "1,2",
+									"description": "Filter by department",
+									"disabled": true
+								},
+								{
+									"key": "group_id",
+									"value": "1,2",
+									"description": "Filter by group",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Employee",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Test",
+									"type": "text"
+								},
+								{
+									"key": "surname",
+									"value": "Test",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "test@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "+37068522735",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "position",
+									"value": "Tester",
+									"type": "text"
+								},
+								{
+									"key": "company_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "office_id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "division_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "department_id",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "group_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "/home/studentas/Downloads/no-image.jpg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/employees",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"employees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employee",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/employees/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"employees",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Employee",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Test",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "surname",
+									"value": "Test",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "test@gmail.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "phone_number",
+									"value": "+37068522735",
+									"type": "text"
+								},
+								{
+									"key": "position",
+									"value": "Tester",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "company_id",
+									"value": "3",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "office_id",
+									"value": "4",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "division_id",
+									"value": "3",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "department_id",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "group_id",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/employees/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"employees",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Employee",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/employees/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"employees",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "List Companies",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/companies",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "energy",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Company",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/companies",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Company",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/companies/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Company",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/companies/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Company",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/companies/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Company Offices",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/companies/:id/offices",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								":id",
+								"offices"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "test",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Company Office",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/companies/:id/offices/:office_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								":id",
+								"offices",
+								":office_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "office_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Office to Company",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/companies/:id/offices/:office_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								":id",
+								"offices",
+								":office_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "office_id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Office from Company",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/companies/:id/offices/:office_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"companies",
+								":id",
+								"offices",
+								":office_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "office_id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Offices",
+			"item": [
+				{
+					"name": "List Offices",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/offices",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "vilnius",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Office",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "street",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "street_number",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/offices",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Office",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/offices/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Office",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test1",
+									"type": "text"
+								},
+								{
+									"key": "street",
+									"value": "test",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "street_number",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "city",
+									"value": "test",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "country",
+									"value": "test",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/offices/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Office",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/offices/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Office Divisions",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/offices/:id/divisions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								":id",
+								"divisions"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "test",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Office Division",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/offices/:id/divisions/:division_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								":id",
+								"divisions",
+								":division_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								},
+								{
+									"key": "division_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Division to Office",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/offices/:id/divisions/:division_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								":id",
+								"divisions",
+								":division_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								},
+								{
+									"key": "division_id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Division from Office",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/offices/:id/divisions/:division_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"offices",
+								":id",
+								"divisions",
+								":division_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								},
+								{
+									"key": "division_id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Divisions",
+			"item": [
+				{
+					"name": "List Divisions",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/divisions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "nd",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Division",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/divisions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Division",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/divisions/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Division",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/divisions/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Division",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/divisions/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Division Departments",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/divisions/:id/departments",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions",
+								":id",
+								"departments"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "test",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Division Department",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/divisions/:id/departments/:department_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions",
+								":id",
+								"departments",
+								":department_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								},
+								{
+									"key": "department_id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Department to Division",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/divisions/:id/departments/:department_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions",
+								":id",
+								"departments",
+								":department_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								},
+								{
+									"key": "department_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Department from Division",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/divisions/:id/departments/:department_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"divisions",
+								":id",
+								"departments",
+								":department_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								},
+								{
+									"key": "department_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Departments",
+			"item": [
+				{
+					"name": "List Departments",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/departments",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "test",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Department",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/departments",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Department",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/departments/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Department",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/departments/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Department",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/departments/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Department Groups",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/departments/:id/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id",
+								"groups"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "test",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Department Group",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/departments/:id/groups/:group_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id",
+								"groups",
+								":group_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								},
+								{
+									"key": "group_id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Group to Department",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/departments/:id/groups/:group_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id",
+								"groups",
+								":group_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								},
+								{
+									"key": "group_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Group from Department",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/departments/:id/groups/:group_id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								":id",
+								"groups",
+								":group_id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4"
+								},
+								{
+									"key": "group_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Groups",
+			"item": [
+				{
+					"name": "List Groups",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"groups"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"description": "Page number",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"description": "Limit per page items",
+									"disabled": true
+								},
+								{
+									"key": "q",
+									"value": "test",
+									"description": "Search in all fields",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Group",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/groups/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Group",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/groups/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/groups/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"groups",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "test1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"description": "Optional",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "test@test.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"description": "Optional, if not provided will be generated",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "avatar",
+									"description": "Optional",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/users/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "test1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "test@test.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/users/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/users/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Permissions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/users/:id/permissions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id",
+								"permissions"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Permissions",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "edit_companies",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/users/:id/permissions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								":id",
+								"permissions"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "admin@example.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My profile information",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/auth/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change my profile information",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/home/studentas/Downloads/no-avatar.png",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/auth/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

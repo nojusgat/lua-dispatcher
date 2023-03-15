@@ -4,15 +4,18 @@ local Column = require "sqliteorm.column"
 
 local SQLiteOrm = {}
 
-function SQLiteOrm:new(database, foreign_keys)
+function SQLiteOrm:new(database, args)
     local instance = setmetatable({}, { __index = SQLiteOrm })
     local sql = assert(driver.sqlite3())
     instance._database = database
     instance._connect = assert(sql:connect(instance._database))
     instance.Table = Table
     instance.Column = Column
-    if foreign_keys == true then
-        instance:execute("PRAGMA foreign_keys = ON")
+
+    if type(args) == "table" then
+        if args.foreign_keys == true then
+            instance:execute("PRAGMA foreign_keys = ON")
+        end
     end
     return instance
 end

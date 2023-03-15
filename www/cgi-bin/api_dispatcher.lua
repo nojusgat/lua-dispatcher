@@ -322,7 +322,7 @@ local function send_response_options(cors, allowed_methods)
     uhttpd.send("Content-Length: 0\r\n\r\n")
 end
 
-local function send_response_file(file_contents, file_name)
+local function send_response_file(file_contents, file_name, download_prompt)
     if not file_name then file_name = "file" end
     local content_type = "application/octet-stream"
     local ext = string.match(file_name, "[^%.]+$")
@@ -330,8 +330,12 @@ local function send_response_file(file_contents, file_name)
         content_type = MIME_TYPES[string.lower(ext)]
     end
     uhttpd.send("Status: 200 OK\r\n")
-    uhttpd.send("Content-Type: " .. content_type .. "\r\n")
-    uhttpd.send("Content-Disposition: attachment; filename=\"" .. file_name .. "\"\r\n\r\n")
+    if download_prompt == true then
+        uhttpd.send("Content-Type: " .. content_type .. "\r\n")
+        uhttpd.send("Content-Disposition: attachment; filename=\"" .. file_name .. "\"\r\n\r\n")
+    else
+        uhttpd.send("Content-Type: " .. content_type .. "\r\n\r\n")
+    end
     uhttpd.send(file_contents)
 end
 
@@ -412,12 +416,12 @@ function handle_request(env)
         for id in string.gmatch(path, "%.(%d+)%.?") do
             table.insert(ids, id)
         end
-        path = string.gsub(path, "(%.)%d+(%.?)", "%1_id_%2")
+        path = string.gsub(path, "(%.)%d+(%.?)", "%1%%id%2")
         endpoint = prequire("endpoints." .. path)
         if not endpoint then
             return send_response({ error = "Not Found" }, 404)
         end
-        env._id_ = ids
+        env["%id"] = ids
     end
 
     env.query = parse_query_string(env.QUERY_STRING)
@@ -436,7 +440,7 @@ function handle_request(env)
             local rlen, rbuf = uhttpd.recv(receive_bytes)
             len = len - rlen
             table.insert(buf, rbuf)
-            if rlen < receive_bytes or rlen <= 0 then break end
+            if rlen <= 0 then break end
         end
         buf = table.concat(buf)
 

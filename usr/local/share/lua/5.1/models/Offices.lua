@@ -10,10 +10,16 @@ local Offices = function (sql)
             },
             {
                 name = "name",
-                type = "string"
+                type = "string",
+                unique = true,
             },
             {
                 name = "street",
+                type = "string",
+                nullable = false
+            },
+            {
+                name = "street_number",
                 type = "string",
                 nullable = false
             },

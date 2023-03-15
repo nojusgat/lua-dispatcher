@@ -75,7 +75,7 @@ function Select:__build_join__()
         local foreign_key = self.parent:get_foreign_key(join.table.name)
         query = query .. " " .. join.type .. " JOIN "
         query = query .. "`" .. join.table.name .. "` ON "
-        query = query .. "`" .. join.table.name .. "`.`" .. join.table.primary_column.name .. "` = "
+        query = query .. "`" .. join.table.name .. "`.`" .. join.table.primary_column[1].name .. "` = "
         query = query .. "`" .. self.parent.name .. "`.`" .. foreign_key.name .. "`"
     end
     return query
@@ -116,7 +116,7 @@ function Select:__build_where__()
                 colvalue = parse_rules(value, "AND", true)
             elseif type(value) == "table" and ends_with(key, operators["IN"]) then
                 local column = columns[cut_ending(key, operators["IN"])]
-                assert(column ~= nil, string.format("Where: Invalid column name %s", cut_ending(key, operators["IN"])))
+                assert(column ~= nil, string.format("Invalid column name %s in select", cut_ending(key, operators["IN"])))
                 local converted_values = {}
                 for _, _value in pairs(value) do
                     table.insert(converted_values, column.type.to_sql(_value))
@@ -124,11 +124,12 @@ function Select:__build_where__()
                 colvalue = column.converted_name_full .. " IN (" .. table.concat(converted_values, ", ") .. ")"
             elseif ends_with(key, operators["LIKE"]) then
                 local column = columns[cut_ending(key, operators["LIKE"])]
-                assert(column ~= nil, string.format("Where: Invalid column name %s", cut_ending(key, operators["LIKE"])))
+                assert(column ~= nil,
+                    string.format("Invalid column name %s in select", cut_ending(key, operators["LIKE"])))
                 colvalue = column.converted_name_full .. " LIKE " .. column.type.to_sql(value)
             else
                 local column = columns[key]
-                assert(column ~= nil, string.format("Where: Invalid column name %s", key))
+                assert(column ~= nil, string.format("Invalid column name %s in select", key))
                 colvalue = column.converted_name_full .. " = " .. column.type.to_sql(value)
             end
 
@@ -172,7 +173,8 @@ function Select:__query__()
 end
 
 function Select:count()
-    local query = "SELECT count(" .. self.parent.primary_column.converted_name_full .. ") FROM `" .. self.parent.name .. "`"
+    local query = "SELECT count(" ..
+        self.parent.primary_column[1].converted_name_full .. ") FROM `" .. self.parent.name .. "`"
 
     if next(self.rules.join) then
         query = query .. self:__build_join__()

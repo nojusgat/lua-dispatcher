@@ -3,15 +3,10 @@ local OfficesDivisions = function (sql, Offices, Divisions)
         name = "offices_divisions",
         columns = {
             {
-                name = "id",
-                type = "number",
-                primary_key = true,
-                auto_increment = true
-            },
-            {
                 name = "office_id",
                 type = "number",
                 nullable = false,
+                primary_key = true,
                 foreign_key = {
                     table = Offices,
                     delete = "CASCADE"
@@ -21,6 +16,7 @@ local OfficesDivisions = function (sql, Offices, Divisions)
                 name = "division_id",
                 type = "number",
                 nullable = false,
+                primary_key = true,
                 foreign_key = {
                     table = Divisions,
                     delete = "CASCADE"

@@ -71,7 +71,7 @@ local Employees = function (sql, Companies, Offices, Divisions, Departments, Gro
                 }
             },
             {
-                name = "photo_path",
+                name = "photo",
                 type = "string"
             },
         },

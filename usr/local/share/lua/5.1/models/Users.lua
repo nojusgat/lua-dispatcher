@@ -1,4 +1,4 @@
-local Users = function (sql, UserPermissions)
+local Users = function (sql)
     return sql:Table({
         name = "users",
         columns = {
@@ -9,29 +9,44 @@ local Users = function (sql, UserPermissions)
                 auto_increment = true
             },
             {
+                name = "username",
+                type = "string",
+                nullable = false,
+                unique = true
+            },
+            {
                 name = "name",
                 type = "string"
             },
             {
                 name = "email",
-                type = "string"
+                type = "string",
+                nullable = false,
+                unique = true
             },
             {
                 name = "password",
-                type = "string"
-            },
-            {
-                name = "avatar_path",
-                type = "string"
-            },
-            {
-                name = "permissions_id",
-                type = "number",
+                type = "string",
                 nullable = false,
-                foreign_key = {
-                    table = UserPermissions,
-                    delete = "CASCADE"
-                }
+            },
+            {
+                name = "password_salt",
+                type = "string",
+                nullable = false,
+            },
+            {
+                name = "system_admin",
+                type = "boolean",
+                nullable = false,
+                default = false
+            },
+            {
+                name = "avatar",
+                type = "string"
+            },
+            {
+                name = "exp",
+                type = "string",
             },
         }
     })

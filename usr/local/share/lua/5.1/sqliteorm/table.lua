@@ -32,10 +32,11 @@ function Table:new(parent, args)
     -- Table creation
     assert(instance.parent:execute(
         string.format(
-            "CREATE TABLE IF NOT EXISTS `%s` (\n\t%s%s\n)",
+            "CREATE TABLE IF NOT EXISTS `%s` (\n\t%s%s%s\n)",
             instance.name,
             instance:columns_to_query(),
-            instance:foreign_keys_to_query()
+            instance:foreign_keys_to_query(),
+            instance:multiple_primary_keys()
         )
     ))
 
@@ -115,16 +116,14 @@ end
 
 function Table:validate_columns()
     assert(next(self.columns) ~= nil, "Undefined columns")
-    local primary = 0
-    local primary_column = nil
+    local primary_columns = {}
     for _, value in pairs(self.columns) do
         if value.primary_key then
-            primary = primary + 1
-            primary_column = value
+            table.insert(primary_columns, value)
         end
     end
-    assert(primary == 1, "There should be exactly one primary column")
-    return primary_column
+    assert(#primary_columns >= 1, "There should at least one primary column")
+    return primary_columns
 end
 
 function Table:get_column(name)
@@ -181,7 +180,7 @@ function Table:foreign_keys_to_query()
         assert(value.foreign_key.table, "Invalid foreign key should have a table")
         assert(type(value.foreign_key.table) == "table", "Invalid foreign key should have a table")
 
-        local column = value.foreign_key.table.primary_column.name
+        local column = value.foreign_key.table.primary_column[1].name
         if value.foreign_key.column ~= nil then
             column = value.foreign_key.column
             value.foreign_key.table:get_column(column)
@@ -201,6 +200,23 @@ function Table:foreign_keys_to_query()
         return ",\n\t" .. table.concat(converted, ", ")
     end
     return ""
+end
+
+function Table:multiple_primary_keys()
+    if #self.primary_column == 1 then
+        return ""
+    end
+    local query = ",\n\tPRIMARY KEY ("
+    local counter = 0
+    for _, value in pairs(self.primary_column) do
+        local name = "`" .. value.name .. "`"
+        if counter ~= 0 then
+            name = ", " .. name
+        end
+        counter = counter + 1
+        query = query .. name
+    end
+    return query .. ")"
 end
 
 function Table:insert(data)
