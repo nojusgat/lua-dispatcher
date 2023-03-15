@@ -15,8 +15,9 @@
 ## Modules used
 - [lua-cjson](https://github.com/openwrt/packages/tree/master/lang/lua-cjson "lua-cjson")
 - [luasql-sqlite3](https://github.com/openwrt/packages/tree/master/lang/luasql "luasql-sqlite3")
-- [luajwt](https://github.com/x25/luajwt "luajwt")
-- [luaunit](https://github.com/bluebird75/luaunit "luaunit") for unit testing
+- [luaossl](https://github.com/openwrt/packages/tree/master/lang/luaossl "luaossl")
+- [lbase64](https://github.com/iskolbin/lbase64 "lbase64")
+- [luaunit](https://github.com/bluebird75/luaunit "luaunit") only for unit testing
 
 
 - [uHTTPd webserver](https://openwrt.org/docs/guide-user/services/webserver/http.uhttpd "uHTTPd webserver")

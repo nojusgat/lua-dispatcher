@@ -1,4 +1,5 @@
 local model = require "models.config"
+local digest = require "openssl.digest"
 
 function string.random(chars, sets)
     if not sets then
@@ -11,6 +12,18 @@ function string.random(chars, sets)
         str = str .. string.char(math.random(charset[1], charset[2]))
     end
     return str
+end
+
+function string.fromhex(str)
+    return (str:gsub('..', function(cc)
+        return string.char(tonumber(cc, 16))
+    end))
+end
+
+function string.tohex(str)
+    return (str:gsub('.', function(c)
+        return string.format('%02X', string.byte(c))
+    end))
 end
 
 local BaseEndpoint = {}
@@ -132,6 +145,14 @@ function BaseEndpoint:upload_image(image)
     file:close()
 
     return file_name
+end
+
+function BaseEndpoint:encrypt_password(plain_text, salt)
+    salt = salt or string.random(32)
+    local password = digest.new("sha256"):final(salt .. plain_text)
+    password = string.tohex(password)
+    password = string.lower(password)
+    return password, salt
 end
 
 function BaseEndpoint:permission(permission)

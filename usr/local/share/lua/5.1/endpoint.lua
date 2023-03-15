@@ -1,4 +1,7 @@
-local jwt = require "luajwt"
+local JWT = require "jwt"
+
+-- JWT SECRET KEY
+local JWT_TOKEN = "secret_key"
 
 local Endpoint = {}
 Endpoint.__index = Endpoint
@@ -25,6 +28,7 @@ function Endpoint:new(instance)
     instance = instance or {}
     self.enabled_authorization = {}
     self.enabled_cors = {}
+    self.jwt = JWT(JWT_TOKEN)
     setmetatable(instance, self)
     return instance
 end
@@ -85,7 +89,7 @@ function Endpoint:authorized(method)
         return false
     end
 
-    local decoded = jwt.decode(self.env.auth_headers.token, self.jwt_secret_key, true)
+    local decoded = self.jwt:decode(self.env.auth_headers.token)
     if not decoded then
         return false
     end

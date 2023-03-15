@@ -1,5 +1,3 @@
-local crypto = require "crypto"
-
 local BaseEndpoint = require "endpoints.BaseEndpoint"
 local UsersEndpoint = {}
 UsersEndpoint.__index = UsersEndpoint
@@ -66,8 +64,7 @@ function UsersEndpoint:post()
         password_not_encrypted = data.password
     end
 
-    local password_salt = string.random(32)
-    local password = crypto.digest("sha256", password_salt .. password_not_encrypted)
+    local password, password_salt = self:encrypt_password(password_not_encrypted)
     data.password = password
     data.password_salt = password_salt
 

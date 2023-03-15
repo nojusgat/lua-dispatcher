@@ -1,6 +1,3 @@
-local jwt = require "luajwt"
-local crypto = require "crypto"
-
 local BaseEndpoint = require "endpoints.BaseEndpoint"
 local LoginEndpoint = {}
 LoginEndpoint.__index = LoginEndpoint
@@ -35,8 +32,7 @@ function LoginEndpoint:post()
         return self.send({ error = "Invalid email address or password" }, 400)
     end
 
-    local password = crypto.digest("sha256", user.password_salt .. data.password)
-    if user.password ~= password then
+    if user.password ~= self:encrypt_password(data.password, user.password_salt) then
         return self.send({ error = "Incorrect password" }, 400)
     end
 
@@ -67,7 +63,7 @@ function LoginEndpoint:post()
     user.exp = exp
     user:save()
 
-    local token = jwt.encode(payload, self.jwt_secret_key, "HS256")
+    local token = self.jwt:encode(payload)
     self.send({ user = user_data, token = token })
 end
 

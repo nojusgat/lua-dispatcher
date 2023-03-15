@@ -1,5 +1,3 @@
-local jwt = require "luajwt"
-
 local GenerateEndpoint = {}
 GenerateEndpoint.__index = GenerateEndpoint
 
@@ -12,7 +10,7 @@ function GenerateEndpoint:get()
         exp = os.time() + 3600,
     }
 
-    local token = jwt.encode(payload, self.jwt_secret_key, "HS256")
+    local token = self.jwt:encode(payload)
     self.send({ token = token })
 end
 

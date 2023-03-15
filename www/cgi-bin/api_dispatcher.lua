@@ -397,9 +397,7 @@ local function parse_incoming_data(headers, buffer)
     os.exit()
 end
 
--- JWT secret key
-local JWT_SECRET_KEY = "random_key"
--- Maximum allowed content length
+-- Default maximum allowed content length
 local LARGEST_CONTENT_LENGTH = 1048576
 
 -- Main body required by uhhtpd-lua plugin
@@ -427,9 +425,10 @@ function handle_request(env)
     env.query = parse_query_string(env.QUERY_STRING)
     env.auth_headers = parse_authorization_header(env.headers)
 
-    local function recv()
+    local function recv(max_content_length)
+        max_content_length = max_content_length or LARGEST_CONTENT_LENGTH
         local len = tonumber(env.CONTENT_LENGTH) or 0
-        if len > LARGEST_CONTENT_LENGTH then
+        if len > max_content_length then
             send_response({ error = "Content too large" }, 413)
             os.exit()
         end
@@ -458,7 +457,6 @@ function handle_request(env)
         send_cors = send_response_cors,
         send_options = send_response_options,
         env = env,
-        jwt_secret_key = JWT_SECRET_KEY,
         http_methods = HTTP_METHODS
     })
     if instance.init then

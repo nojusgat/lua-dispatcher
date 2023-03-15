@@ -1,5 +1,3 @@
-local crypto = require "crypto"
-
 local BaseEndpoint = require "endpoints.BaseEndpoint"
 local UserProfileEndpoint = {}
 UserProfileEndpoint.__index = UserProfileEndpoint
@@ -30,8 +28,7 @@ function UserProfileEndpoint:patch()
         if tostring(data.password):len() < 8 then
             return self.send({ error = "Minimum password length is 8 characters" }, 400)
         end
-        local password_salt = string.random(32)
-        local password = crypto.digest("sha256", password_salt .. data.password)
+        local password, password_salt = self:encrypt_password(data.password)
         data.password = password
         data.password_salt = password_salt
     end

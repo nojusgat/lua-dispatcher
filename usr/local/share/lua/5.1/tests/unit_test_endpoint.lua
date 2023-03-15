@@ -1,4 +1,4 @@
-package.loaded["luajwt"] = require "tests.fake_luajwt"
+package.loaded["jwt"] = require "tests.fake_jwt"
 
 local lu = require "luaunit"
 local endpoint = require "endpoint"
