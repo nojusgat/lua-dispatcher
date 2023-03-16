@@ -35,9 +35,15 @@ local function table_contains(table, value)
 end
 
 local algorithms = {
-    ["HS256"] = function(key, data) return hmac_encrypt(key, "sha256", data) end,
-    ["HS384"] = function(key, data) return hmac_encrypt(key, "sha384", data) end,
-    ["HS512"] = function(key, data) return hmac_encrypt(key, "sha512", data) end,
+    ["HS256"] = function(key, data)
+        return hmac_encrypt(key, "sha256", data)
+    end,
+    ["HS384"] = function(key, data)
+        return hmac_encrypt(key, "sha384", data)
+    end,
+    ["HS512"] = function(key, data)
+        return hmac_encrypt(key, "sha512", data)
+    end
 }
 
 local JWT = {}
@@ -47,7 +53,9 @@ function JWT:new(key, algorithm)
     assert(key ~= nil and type(key) == "string", "JWT invalid secret key")
     assert(algorithms[algorithm] ~= nil, "JWT algorithm not supported")
 
-    local instance = setmetatable({}, { __index = JWT })
+    local instance = setmetatable({}, {
+        __index = JWT
+    })
     instance._secret = key
     instance._algorithm = algorithms[algorithm]
     instance._header = {
@@ -61,34 +69,46 @@ function JWT:new(key, algorithm)
 end
 
 function JWT:secret(secret)
-    local instance = setmetatable({}, { __index = self })
+    local instance = setmetatable({}, {
+        __index = self
+    })
     instance._secret = secret
     return instance
 end
 
 function JWT:require_exp(time)
-    local instance = setmetatable({}, { __index = self })
+    local instance = setmetatable({}, {
+        __index = self
+    })
     if not time then
         instance._exp = os.time
     else
-        instance._exp = function() return time end
+        instance._exp = function()
+            return time
+        end
     end
     return instance
 end
 
 function JWT:require_nbf(time)
-    local instance = setmetatable({}, { __index = self })
+    local instance = setmetatable({}, {
+        __index = self
+    })
     if not time then
         instance._nbf = os.time
     else
-        instance._nbf = function() return time end
+        instance._nbf = function()
+            return time
+        end
     end
     return instance
 end
 
 function JWT:require_iss(issuers)
     assert(type(issuers) == "table", "Issuers should be a table")
-    local instance = setmetatable({}, { __index = self })
+    local instance = setmetatable({}, {
+        __index = self
+    })
     instance._iss = issuers
     return instance
 end
@@ -98,10 +118,7 @@ function JWT:encode(payload)
         return nil, "Payload should be a table"
     end
 
-    local segments = {
-        base64_url_encode(cjson.encode(self._header)),
-        base64_url_encode(cjson.encode(payload))
-    }
+    local segments = {base64_url_encode(cjson.encode(self._header)), base64_url_encode(cjson.encode(payload))}
 
     local data = table.concat(segments, ".")
 
@@ -113,10 +130,18 @@ function JWT:encode(payload)
 end
 
 function JWT:decode(token, verify)
-    if not verify then verify = true end
-    if not token then return nil, "Token should not be empty" end
-    if type(verify) ~= "boolean" then return nil, "Verification should be either true or false" end
-    if type(token) ~= "string" then return nil, "Token should be string" end
+    if not verify then
+        verify = true
+    end
+    if not token then
+        return nil, "Token should not be empty"
+    end
+    if type(verify) ~= "boolean" then
+        return nil, "Verification should be either true or false"
+    end
+    if type(token) ~= "string" then
+        return nil, "Token should be string"
+    end
 
     local base64_header, base64_payload, base64_secret = string.match(token, "^([^.]+)%.([^.]+)%.([^.]+)$")
 
@@ -125,8 +150,7 @@ function JWT:decode(token, verify)
     end
 
     local status, header, payload, secret = pcall(function()
-        return cjson.decode(base64_url_decode(base64_header)),
-            cjson.decode(base64_url_decode(base64_payload)),
+        return cjson.decode(base64_url_decode(base64_header)), cjson.decode(base64_url_decode(base64_payload)),
             base64_url_decode(base64_secret)
     end)
 
@@ -185,6 +209,8 @@ function JWT:decode(token, verify)
     return payload
 end
 
-setmetatable(JWT, { __call = JWT.new })
+setmetatable(JWT, {
+    __call = JWT.new
+})
 
 return JWT

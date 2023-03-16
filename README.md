@@ -17,6 +17,7 @@
 - [luasql-sqlite3](https://github.com/openwrt/packages/tree/master/lang/luasql "luasql-sqlite3")
 - [luaossl](https://github.com/openwrt/packages/tree/master/lang/luaossl "luaossl")
 - [lbase64](https://github.com/iskolbin/lbase64 "lbase64")
+- [Lua-cURLv3](https://github.com/openwrt/packages/tree/master/lang/lua-curl-v3 "Lua-cURLv3")
 - [luaunit](https://github.com/bluebird75/luaunit "luaunit") only for unit testing
 
 

@@ -34,7 +34,9 @@ function Endpoint:new(instance)
 end
 
 function Endpoint:enable_cors(method, domains)
-    if domains == nil then domains = true end
+    if domains == nil then
+        domains = true
+    end
     assert(type(domains) == "table" or type(domains) == "boolean", "Domains should be a table or a boolean")
     if not method then
         for _, v in pairs(self.http_methods) do
@@ -64,7 +66,9 @@ function Endpoint:cors_options(method)
                 methods = methods
             }
         end
-        return { origin = "" }
+        return {
+            origin = ""
+        }
     end
     return {}
 end
@@ -133,14 +137,18 @@ function Endpoint:handle_request()
 
     local methods = self:allowed_methods(self.http_methods)
     if not table_contains(methods, string.upper(self.env.REQUEST_METHOD)) then
-        return self.send({ error = "Method Not Allowed" }, 405)
+        return self.send({
+            error = "Method Not Allowed"
+        }, 405)
     end
 
     if self:authorized(method) then
         return self[method](self)
     end
 
-    self.send({ error = "Unauthorized" }, 401)
+    self.send({
+        error = "Unauthorized"
+    }, 401)
 end
 
 return Endpoint

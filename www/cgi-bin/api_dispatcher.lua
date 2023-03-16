@@ -2,6 +2,8 @@ cjson = require "cjson"
 Endpoint = require "endpoint"
 UCIOrm = require "uciorm"
 
+-- require("LuaPanda").start("127.0.0.1", 8818)
+
 local STATUS_MESSAGES = {
     [100] = "Continue",
     [101] = "Switching Protocols",

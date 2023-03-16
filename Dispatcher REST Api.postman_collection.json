@@ -1999,6 +1999,74 @@
 			"name": "Auth",
 			"item": [
 				{
+					"name": "Password reset",
+					"item": [
+						{
+							"name": "Request password reset",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "admin@example.com",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/auth/password_reset",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"password_reset"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change password",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "347243399492",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "test123456",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/auth/password_reset",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"password_reset"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Login",
 					"request": {
 						"auth": {

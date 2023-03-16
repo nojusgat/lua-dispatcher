@@ -3,6 +3,7 @@ local sql = sqlite("database.db", {
     foreign_keys = true
 })
 
+local UserPasswordReset = require "models.UserPasswordReset"
 local UserPermissions = require "models.UserPermissions"
 local Users = require "models.Users"
 local Companies = require "models.Companies"
@@ -19,6 +20,7 @@ local OfficesDivisions = require "models.OfficesDivisions"
 local config = {}
 config["Users"] = Users(sql)
 config["UserPermissions"] = UserPermissions(sql, config["Users"])
+config["UserPasswordReset"] = UserPasswordReset(sql, config["Users"])
 config["Companies"] = Companies(sql)
 config["Offices"] = Offices(sql)
 config["Departments"] = Departments(sql)
