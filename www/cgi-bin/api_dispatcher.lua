@@ -2,8 +2,6 @@ cjson = require "cjson"
 Endpoint = require "endpoint"
 UCIOrm = require "uciorm"
 
--- require("LuaPanda").start("127.0.0.1", 8818)
-
 local STATUS_MESSAGES = {
     [100] = "Continue",
     [101] = "Switching Protocols",
@@ -62,7 +60,7 @@ local STATUS_MESSAGES = {
     [507] = "Insufficient Storage",
     [508] = "Loop Detected",
     [510] = "Not Extended",
-    [511] = "Network Authentication Required",
+    [511] = "Network Authentication Required"
 }
 
 local MIME_TYPES = {
@@ -136,20 +134,10 @@ local MIME_TYPES = {
     ["xml"] = "application/xml",
     ["xul"] = "application/vnd.mozilla.xul+xml",
     ["zip"] = "application/zip",
-    ["7z"] = "application/x-7z-compressed",
+    ["7z"] = "application/x-7z-compressed"
 }
 
-local HTTP_METHODS = {
-    "CONNECT",
-    "DELETE",
-    "GET",
-    "HEAD",
-    "PATCH",
-    "OPTIONS",
-    "POST",
-    "PUT",
-    "TRACE"
-}
+local HTTP_METHODS = {"CONNECT", "DELETE", "GET", "HEAD", "PATCH", "OPTIONS", "POST", "PUT", "TRACE"}
 
 local function prequire(...)
     local status, lib = pcall(require, ...)
@@ -226,47 +214,49 @@ local function parse_form_data(body, boundry)
         if (body:sub(se - 1, se) == "--") then
             eor_reached = true
         end
-        --Search for content disposition header
+        -- Search for content disposition header
         local cont_disp = body:match("Content%-Disposition:.-\r\n", e - 1):sub(33):gsub("[\r\n]+.+", "")
         local cont_type = body:match("Content%-Type:.-\r\n", e - 1)
-        --This tells if we have a file
+        -- This tells if we have a file
         if (cont_type ~= nil) then
             cont_type = cont_type:sub(15, -3)
         end
-        --Basically just find this and remove it, help the parser out.
+        -- Basically just find this and remove it, help the parser out.
         local sm = cont_disp:find(";")
         if (sm ~= nil) then
             cont_disp = cont_disp:sub(1, sm - 1) .. cont_disp:sub(sm + 1)
         end
-        --Find the end of Content-Disposition. Could have done this better, in case it sends headers.
+        -- Find the end of Content-Disposition. Could have done this better, in case it sends headers.
         local _, cont_end = body:find("Content%-Disposition:.-\r\n\r\n", e - 1)
         local ct = {}
-        --Find a key/value pair
+        -- Find a key/value pair
         local cs, ce = cont_disp:find(".-=\".-\"")
         while (cs) do
-            --Get our pair.
+            -- Get our pair.
             local cb = cont_disp:sub(cs, ce)
-            --Find the key
+            -- Find the key
             local cd_key = cb:match(".-=\""):sub(1, -3)
-            --Find the value
+            -- Find the value
             local cd_value = cb:match("=\".-\""):sub(3, -2)
-            --Store
+            -- Store
             ct[cd_key] = cd_value
-            --Find the next one
+            -- Find the next one
             cs, ce = cont_disp:find(".-=\".-\"", ce)
-            --But it's not super accurate.
-            if (cs ~= nil) then cs = cs + 2 end
+            -- But it's not super accurate.
+            if (cs ~= nil) then
+                cs = cs + 2
+            end
         end
-        --Do we have a file?
+        -- Do we have a file?
         if (ct.filename ~= nil) then
-            --Yes, add it like so
+            -- Yes, add it like so
             t[ct.name] = {
                 data = body:sub(cont_end + 1, ss - 3),
                 filename = ct.filename,
                 mime = cont_type
             }
         else
-            --No. Just add the data.
+            -- No. Just add the data.
             t[ct.name] = body:sub(cont_end + 1, ss - 3);
         end
         s, e = ss, se
@@ -291,7 +281,9 @@ local function parse_send_response_arguments(response, status)
 end
 
 local function set_cors_headers(cors)
-    if cors == nil then return end
+    if cors == nil then
+        return
+    end
     assert(type(cors) == "table", "Invalid cors settings")
     local origin = cors.origin
     local methods = cors.methods
@@ -325,7 +317,9 @@ local function send_response_options(cors, allowed_methods)
 end
 
 local function send_response_file(file_contents, file_name, download_prompt)
-    if not file_name then file_name = "file" end
+    if not file_name then
+        file_name = "file"
+    end
     local content_type = "application/octet-stream"
     local ext = string.match(file_name, "[^%.]+$")
     if ext and MIME_TYPES[string.lower(ext)] then
@@ -351,14 +345,18 @@ end
 
 local function parse_incoming_data(headers, buffer)
     if not headers["content-type"] then
-        send_response({ error = "Content type not provided" }, 400)
+        send_response({
+            error = "Content type not provided"
+        }, 400)
         os.exit()
     end
 
     if string.match(headers["content-type"], "^application/json") then
         local status, data = pcall(cjson.decode, buffer)
         if not status then
-            send_response({ error = "Invalid json" }, 400)
+            send_response({
+                error = "Invalid json"
+            }, 400)
             os.exit()
         else
             return data
@@ -368,7 +366,9 @@ local function parse_incoming_data(headers, buffer)
     if string.match(headers["content-type"], "^application/x%-www%-form%-urlencoded") then
         local status, data = pcall(parse_query_string, buffer)
         if not status then
-            send_response({ error = "Invalid form data" }, 400)
+            send_response({
+                error = "Invalid form data"
+            }, 400)
             os.exit()
         else
             return data
@@ -378,13 +378,17 @@ local function parse_incoming_data(headers, buffer)
     if string.match(headers["content-type"], "^multipart/form%-data") then
         local boundary = string.match(headers["content-type"], "^multipart/form%-data; boundary=(.+)$")
         if not boundary then
-            send_response({ error = "Boundary not found" }, 400)
+            send_response({
+                error = "Boundary not found"
+            }, 400)
             os.exit()
         end
 
         local status, data = pcall(parse_form_data, buffer, boundary)
         if not status then
-            send_response({ error = "Invalid form data" }, 400)
+            send_response({
+                error = "Invalid form data"
+            }, 400)
             os.exit()
         else
             return data
@@ -395,18 +399,19 @@ local function parse_incoming_data(headers, buffer)
         return buffer
     end
 
-    send_response({ error = "Unable to handle this content type" }, 500)
+    send_response({
+        error = "Unable to handle this content type"
+    }, 500)
     os.exit()
 end
-
--- Default maximum allowed content length
-local LARGEST_CONTENT_LENGTH = 1048576
 
 -- Main body required by uhhtpd-lua plugin
 function handle_request(env)
     local path = parse_request_uri(env.REQUEST_URI)
     if path == "" then
-        return send_response({ error = "Not Found" }, 404)
+        return send_response({
+            error = "Not Found"
+        }, 404)
     end
 
     local endpoint = prequire("endpoints." .. path)
@@ -419,7 +424,9 @@ function handle_request(env)
         path = string.gsub(path, "(%.)%d+(%.?)", "%1%%id%2")
         endpoint = prequire("endpoints." .. path)
         if not endpoint then
-            return send_response({ error = "Not Found" }, 404)
+            return send_response({
+                error = "Not Found"
+            }, 404)
         end
         env["%id"] = ids
     end
@@ -427,21 +434,28 @@ function handle_request(env)
     env.query = parse_query_string(env.QUERY_STRING)
     env.auth_headers = parse_authorization_header(env.headers)
 
+    local endpoint_config = UCIOrm:init("rest_api", "endpoint")
+    local LARGEST_CONTENT_LENGTH = tonumber(endpoint_config:get("content_length_max")) or 1048576
+
     local function recv(max_content_length)
         max_content_length = max_content_length or LARGEST_CONTENT_LENGTH
         local len = tonumber(env.CONTENT_LENGTH) or 0
         if len > max_content_length then
-            send_response({ error = "Content too large" }, 413)
+            send_response({
+                error = "Content too large"
+            }, 413)
             os.exit()
         end
 
-        local buf = { "" }
+        local buf = {""}
         local receive_bytes = 4096
         while len > 0 do
             local rlen, rbuf = uhttpd.recv(receive_bytes)
             len = len - rlen
             table.insert(buf, rbuf)
-            if rlen <= 0 then break end
+            if rlen <= 0 then
+                break
+            end
         end
         buf = table.concat(buf)
 

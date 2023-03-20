@@ -149,7 +149,7 @@ function EmployeesEndpoint:post()
 
     if status == false then
         if data.photo then
-            os.remove(self.image_path .. data.photo)
+            os.remove(self.image_path() .. data.photo)
         end
         local error = string.match(results, ": (.+)$")
         return self.send({ error = error }, 400)

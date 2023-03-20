@@ -63,6 +63,7 @@ function LoginEndpoint:post()
     end
 
     user_data.permissions = permissions or {}
+    user_data.exp = nil
 
     local exp = os.time() + 3600
 

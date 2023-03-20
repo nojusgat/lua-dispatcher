@@ -1,0 +1,12 @@
+
+config rest_api 'email'
+	option smtp 'smtps://smtp.gmail.com:465'
+	option username ''
+	option password ''
+	option email ''
+	option name 'REST Api'
+
+config rest_api 'endpoint'
+	option content_length_max '1048576'
+	option images_path '/www/images/'
+

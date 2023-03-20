@@ -34,13 +34,20 @@ setmetatable(BaseEndpoint, {
 })
 
 BaseEndpoint.model = model
-BaseEndpoint.image_path = "/www/images/"
 
-BaseEndpoint.email_client = require "emailclient"({
-    smtp = "smtps://smtp.gmail.com:465",
-    username = "",
-    password = ""
-})
+function BaseEndpoint.image_path()
+    local endpoint_config = UCIOrm:init("rest_api", "endpoint")
+    return endpoint_config:get("images_path") or "/www/images/"
+end
+
+function BaseEndpoint.email_client()
+    local email_config = UCIOrm:init("rest_api", "email")
+    return require "emailclient"({
+        smtp = email_config:get("smtp"),
+        username = email_config:get("username"),
+        password = email_config:get("password")
+    })()
+end
 
 function BaseEndpoint:query_to_number(query, allow_zero_or_less)
     local value
@@ -162,7 +169,7 @@ function BaseEndpoint:upload_image(image)
     local random_string = string.random("5", {{97, 122}, {65, 90}, {48, 57}})
     local file_name = random_string .. "_" .. os.time() .. "." .. allowed_mime_types[file_type]
 
-    local file = io.open(self.image_path .. file_name, "wb")
+    local file = io.open(self.image_path() .. file_name, "wb")
     if not file then
         self.send({
             error = "Failed to upload file"

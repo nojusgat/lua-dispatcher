@@ -77,14 +77,14 @@ function UserEndpoint:patch()
 
     if status == false then
         if data.avatar then
-            os.remove(self.image_path .. data.avatar)
+            os.remove(self.image_path() .. data.avatar)
         end
         local error = string.match(results, ": (.+)$")
         return self.send({ error = error }, 400)
     end
 
     if last_avatar then
-        os.remove(self.image_path .. last_avatar)
+        os.remove(self.image_path() .. last_avatar)
     end
 
     self.send("", 204)

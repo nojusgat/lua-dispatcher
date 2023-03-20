@@ -49,14 +49,14 @@ function PasswordResetEndpoint:post()
         expire = os.time() + 3600
     })
 
-    local system_name = "REST Api"
+    local email_config = UCIOrm:init("rest_api", "email")
     local email = self.email_client()
-        :from("eemailsendertest@gmail.com", system_name)
+        :from(email_config:get("email"), email_config:get("name"))
         :to(user.email)
         :subject("Password Reset Request")
         :plain_body("Hi " .. (user.name or user.username) .. ",\n\n" .. "We've received a request to reset your password.\n\n" ..
                     "If you did not make the request, just ignore this message. Otherwise, you can reset your password.\n\n" ..
-                    "Your password reset code is:\n" .. randomCode .. "\n\n" .. "Thanks,\n" .. system_name)
+                    "Your password reset code is:\n" .. randomCode .. "\n\n" .. "Thanks,\n" .. email_config:get("name"))
 
     local status, err = email:send()
     if status == false then

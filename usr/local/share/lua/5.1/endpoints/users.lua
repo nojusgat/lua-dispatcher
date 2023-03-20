@@ -80,7 +80,7 @@ function UsersEndpoint:post()
 
     if status == false then
         if data.avatar then
-            os.remove(self.image_path .. data.avatar)
+            os.remove(self.image_path() .. data.avatar)
         end
         local error = string.match(results, ": (.+)$")
         return self.send({ error = error }, 400)
